@@ -1,0 +1,75 @@
+experiment:
+  name: dccrn_base
+  output_dir: runs/dccrn_base
+  seed: 42
+  deterministic: true
+
+data:
+  mode: separate_lists
+  train_clean_list: data/train_clean.txt
+  train_noise_list: data/train_noise.txt
+  valid_pair_list: data/valid_pairs.txt
+  test_pair_list: data/test_pairs.txt
+  sample_rate: 16000
+  segment_seconds: 4.0
+  train_snr_min: -5.0
+  train_snr_max: 20.0
+  num_workers: 4
+  augment:
+    random_gain: false
+    polarity_flip: false
+    time_shift: false
+
+stft:
+  n_fft: 512
+  win_length: 400
+  hop_length: 100
+  window: hann
+  center: true
+
+model:
+  name: dccrn
+  reconstruction_mode: dccrn_e
+  encoder_channels: [32, 64, 128, 128, 256, 256]
+  kernel_size: [5, 2]
+  stride: [2, 1]
+  lstm_layers: 2
+  lstm_hidden_size: 256
+  use_complex_lstm: false
+  mask_activation: tanh
+
+loss:
+  si_snr:
+    weight: 1.0
+  complex_l1:
+    weight: 0.0
+  magnitude_l1:
+    weight: 0.0
+
+training:
+  epochs: 100
+  batch_size: 8
+  optimizer: adam
+  learning_rate: 0.001
+  weight_decay: 0.0
+  gradient_clip_norm: 5.0
+  amp: true
+  save_every: 5
+  early_stopping_patience: 10
+  resume: null
+
+scheduler:
+  name: reduce_on_plateau
+  factor: 0.5
+  patience: 2
+  min_lr: 1.0e-6
+
+evaluation:
+  save_audio_examples: true
+  max_audio_examples: 10
+  group_by_input_snr: true
+
+inference:
+  chunk_seconds: 10.0
+  overlap_seconds: 1.0
+
