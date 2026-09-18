@@ -1,0 +1,76 @@
+experiment:
+  name: dccrn_snr_m10_10_lr=1e-4_si_snr=0.9,smse=0.1
+  output_dir: logs/dccrn_snr_m10_10_lr=1e-4_si_snr=0.9,smse=0.1
+  seed: 42
+  deterministic: true
+data:
+  mode: separate_lists
+  train_clean_list: data/ShipsEar-12class_W5H1/train_16k_signal.list
+  train_noise_list: data/ShipsEar-12class_W5H1/train_16k_noise.list
+  valid_pair_list: data/ShipsEar-12class_W5H1/valid/list/valid_snr_-5dB.list
+  test_pair_list: data/ShipsEar-12class_W5H1/test/list/valid_snr_-5dB.list
+  sample_rate: 16000
+  segment_seconds: 5.0
+  train_snr_min: -10
+  train_snr_max: 10
+  num_workers: 2
+  augment:
+    random_gain: false
+    polarity_flip: false
+    time_shift: false
+stft:
+  n_fft: 512
+  win_length: 400
+  hop_length: 100
+  window: hann
+  center: true
+model:
+  name: dccrn
+  reconstruction_mode: dccrn_e
+  encoder_channels:
+  - 32
+  - 64
+  - 128
+  - 128
+  - 256
+  - 256
+  kernel_size:
+  - 5
+  - 2
+  stride:
+  - 2
+  - 1
+  lstm_layers: 2
+  lstm_hidden_size: 256
+  use_complex_lstm: false
+  mask_activation: tanh
+loss:
+  si_snr:
+    enabled: true
+    weight: 0.9
+  smse:
+    enabled: true
+    weight: 0.1
+training:
+  epochs: 50
+  batch_size: 32
+  optimizer: adam
+  learning_rate: 0.0001
+  weight_decay: 0.0
+  gradient_clip_norm: 5.0
+  amp: false
+  save_every: 5
+  early_stopping_patience: 10
+  resume: null
+scheduler:
+  name: reduce_on_plateau
+  factor: 0.5
+  patience: 2
+  min_lr: 1.0e-06
+evaluation:
+  save_audio_examples: true
+  max_audio_examples: 10
+  group_by_input_snr: true
+inference:
+  chunk_seconds: 10.0
+  overlap_seconds: 1.0

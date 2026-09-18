@@ -44,29 +44,36 @@ def si_snr(
     return torch.where(non_silent, values, torch.zeros_like(values))
 
 
+# class SISNRLoss(nn.Module):
+#     """Negative mean SI-SNR loss."""
+
+#     def forward(
+#         self, estimate: torch.Tensor, target: torch.Tensor, lengths: Optional[torch.Tensor] = None
+#     ) -> torch.Tensor:
+#         return -si_snr(estimate, target, lengths).mean()
+
+# class SISNRLoss(nn.Module):
+#     def forward(
+#         self,
+#         outputs: dict,
+#         target: torch.Tensor,
+#         lengths=None,
+#     ) -> torch.Tensor:
+#         estimate = outputs["waveform"]
+#         return -si_snr(estimate, target, lengths).mean()
+
 class SISNRLoss(nn.Module):
     """Negative mean SI-SNR loss."""
-
-    def forward(
-        self, estimate: torch.Tensor, target: torch.Tensor, lengths: Optional[torch.Tensor] = None
-    ) -> torch.Tensor:
-        return -si_snr(estimate, target, lengths).mean()
-
-
-class LossManager(nn.Module):
-    """Extensible weighted loss manager; SI-SNR is the phase-one objective."""
-
-    def __init__(self, config: Dict[str, Dict[str, float]]) -> None:
-        super().__init__()
-        self.si_snr_weight = float(config.get("si_snr", {}).get("weight", 1.0))
-        self.si_snr_loss = SISNRLoss()
 
     def forward(
         self,
         outputs: Dict[str, torch.Tensor],
         target: torch.Tensor,
         lengths: Optional[torch.Tensor] = None,
-    ) -> Dict[str, torch.Tensor]:
-        value = self.si_snr_loss(outputs["waveform"], target, lengths)
-        total = self.si_snr_weight * value
-        return {"total": total, "si_snr_loss": value, "si_snr": -value}
+    ) -> torch.Tensor:
+        return -si_snr(
+            outputs["waveform"],
+            target,
+            lengths,
+        ).mean()
+

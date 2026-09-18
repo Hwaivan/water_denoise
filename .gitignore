@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# Training outputs
+logs/
+runs/
+checkpoints/
+wandb/
+
+# Model checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# TensorBoard
+events.out.tfevents.*
+
+# Dataset
+data/
+datasets/
+
+# Audio data
+*.wav
+*.flac
+
+# Temporary files
+*.log
+*.tmp
+
+# OS
+.DS_Store
+
+*.aux
+*.log
+*.synctex.gz
+*.pdf

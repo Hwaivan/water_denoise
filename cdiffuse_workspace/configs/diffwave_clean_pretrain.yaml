@@ -1,0 +1,2 @@
+project: {name: diffwave_clean_pretrain, output_dir: runs/diffwave_clean_pretrain}
+training: {pretrained_diffwave_checkpoint: null}

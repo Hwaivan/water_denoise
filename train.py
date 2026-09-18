@@ -37,13 +37,28 @@ def build_scheduler(optimizer: torch.optim.Optimizer, config: dict):
     scheduler = config.get("scheduler", {})
     name = scheduler.get("name", "reduce_on_plateau").lower()
     if name == "reduce_on_plateau":
+        # return torch.optim.lr_scheduler.ReduceLROnPlateau(
+        #     optimizer,
+        #     mode="max",
+        #     factor=float(scheduler.get("factor", 0.5)),
+        #     patience=int(scheduler.get("patience", 2)),
+        #     min_lr=float(scheduler.get("min_lr", 1.0e-6)),
+        # )
+
+        monitor_mode = (
+            config.get("loss", {})
+            .get("monitor", {})
+            .get("mode", "max")
+        )
+
         return torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
-            mode="max",
+            mode=monitor_mode,
             factor=float(scheduler.get("factor", 0.5)),
             patience=int(scheduler.get("patience", 2)),
             min_lr=float(scheduler.get("min_lr", 1.0e-6)),
         )
+
     if name == "cosine":
         return torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer, T_max=int(config["training"]["epochs"]), eta_min=float(scheduler.get("min_lr", 1.0e-6))
@@ -63,7 +78,33 @@ def main() -> None:
     device = torch.device(device_name)
     output_dir = config["experiment"]["output_dir"]
     logger = create_logger(config["experiment"]["name"], output_dir)
-    model = build_model(config)
+
+    model = build_model(config).to(device)
+
+    gpu_count = (
+        torch.cuda.device_count()
+        if device.type == "cuda"
+        else 0
+    )   
+
+    if gpu_count > 1:
+        logger.info(
+            "Using DataParallel with %d GPUs: %s",
+            gpu_count,
+            list(range(gpu_count)),
+        )
+
+        model = torch.nn.DataParallel(
+            model,
+            device_ids=list(range(gpu_count)),
+            output_device=0,
+        )
+    else:
+        logger.info(
+            "Using single device: %s",
+            device,
+        )
+
     train_dataset = build_dataset(config, "train", seed)
     valid_dataset = build_dataset(config, "valid", seed + 1)
     train_loader = build_loader(train_dataset, config, True, seed)
@@ -71,8 +112,10 @@ def main() -> None:
     total_parameters = sum(parameter.numel() for parameter in model.parameters())
     trainable_parameters = sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad)
     logger.info(
-        "device=%s parameters=%d trainable=%d train_items=%d valid_items=%d",
+        "device=%s gpu_count=%d parameters=%d trainable=%d "
+        "train_items=%d valid_items=%d",
         device,
+        gpu_count,
         total_parameters,
         trainable_parameters,
         len(train_dataset),
@@ -81,7 +124,7 @@ def main() -> None:
     optimizer = build_optimizer(model, config)
     trainer = Trainer(
         model,
-        LossManager(config["loss"]),
+        LossManager(config["loss"],config["stft"]),
         optimizer,
         build_scheduler(optimizer, config),
         device,

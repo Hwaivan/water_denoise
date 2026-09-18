@@ -38,13 +38,35 @@ model:
   use_complex_lstm: false
   mask_activation: tanh
 
+# loss:
+#   si_snr:
+#     weight: 1.0
+#   complex_l1:
+#     weight: 0.0
+#   magnitude_l1:
+#     weight: 0.0
+
 loss:
-  si_snr:
-    weight: 1.0
-  complex_l1:
-    weight: 0.0
-  magnitude_l1:
-    weight: 0.0
+  components:
+    si_snr:
+      enabled: true
+      weight: 1.0
+
+    waveform_l1:
+      enabled: false
+      weight: 1.0
+
+    waveform_mse:
+      enabled: false
+      weight: 1.0
+
+    smse:
+      enabled: false
+      weight: 1.0
+
+  monitor:
+    name: si_snr
+    mode: max
 
 training:
   epochs: 100
@@ -53,7 +75,7 @@ training:
   learning_rate: 0.001
   weight_decay: 0.0
   gradient_clip_norm: 5.0
-  amp: true
+  amp: false
   save_every: 5
   early_stopping_patience: 10
   resume: null
