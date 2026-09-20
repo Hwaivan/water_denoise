@@ -29,7 +29,10 @@ class CDiffuSESchedule:
         alpha_bar = torch.cat((torch.ones(1, dtype=torch.float64), alpha.cumprod(0)))
         beta = torch.cat((torch.zeros(1, dtype=torch.float64), beta))
         alpha = torch.cat((torch.ones(1, dtype=torch.float64), alpha))
-        m = (1.0 - alpha_bar) / torch.sqrt(alpha_bar)
+        
+        # m = (1.0 - alpha_bar) / torch.sqrt(alpha_bar)
+        m = torch.sqrt((1.0 - alpha_bar) / torch.sqrt(alpha_bar))
+
         delta = (1.0 - alpha_bar) - m.square() * alpha_bar
         m[0] = 0.0
         delta[0] = 0.0
