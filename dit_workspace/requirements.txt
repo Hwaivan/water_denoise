@@ -1,0 +1,6 @@
+torch>=2.2
+numpy>=1.23,<2
+PyYAML>=6
+soundfile>=0.12
+tensorboard>=2.12
+pytest>=7,<9

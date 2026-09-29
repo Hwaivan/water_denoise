@@ -1,8 +1,82 @@
-project: {name: cdiffuse_water_large, output_dir: runs/cdiffuse_water_large}
-data: {sample_rate: 16000, segment_seconds: 2.048, data_mode: on_the_fly, train_manifest: data/train_clean.txt, valid_manifest: data/valid.tsv, test_manifest: data/test.tsv, noise_manifest: data/noise.txt, snr_min: -5, snr_max: 20, num_workers: 0, shared_peak_limit: 0.99}
-conditioner: {type: noisy_spectrum, n_fft: 1024, win_length: 1024, hop_length: 256, feature: magnitude}
-diffusion: {name: cdiffuse, num_steps: 200, beta_start: 0.0001, beta_end: 0.0095, variance_floor: 1.0e-12}
-model: {name: diffwave, residual_layers: 30, residual_channels: 128, dilation_cycle_length: 10, kernel_size: 3, conditioner_channels: 128}
-training: {seed: 42, epochs: 160, batch_size: 4, learning_rate: 0.0002, ema_decay: 0.999, grad_clip_norm: 5.0, amp: true, pretrained_diffwave_checkpoint: null}
-sampler: {mode: full, seed: 1234, fast_schedule: [0.0001, 0.001, 0.01, 0.05, 0.2, 0.35]}
-evaluation: {noisy_mix_ratio: 0.2, save_audio_limit: -1, save_diffusion_steps: false, diffusion_example_limit: 2, diffusion_step_interval: 5}
+project:
+  name: cdiffuse_water_large
+  output_dir: runs/cdiffuse_water_large
+
+data:
+  sample_rate: 16000
+  segment_seconds: 2.048
+  data_mode: on_the_fly
+  train_manifest: data/train_clean.txt
+  valid_manifest: data/valid.tsv
+  test_manifest: data/test.tsv
+  noise_manifest: data/noise.txt
+  snr_min: -5
+  snr_max: 20
+  num_workers: 0
+  shared_peak_limit: 0.99
+
+conditioner:
+  type: noisy_spectrum
+  n_fft: 1024
+  win_length: 1024
+  hop_length: 256
+  feature: magnitude
+
+diffusion:
+  name: cdiffuse
+  num_steps: 200
+  beta_start: 0.0001
+  beta_end: 0.0095
+  variance_floor: 1.0e-12
+
+model:
+  name: diffwave
+  residual_layers: 30
+  residual_channels: 128
+  dilation_cycle_length: 10
+  kernel_size: 3
+  conditioner_channels: 128
+
+training:
+  seed: 42
+  epochs: 160
+  batch_size: 4
+  learning_rate: 0.0002
+  weight_decay: 0.0
+  ema_decay: 0.999
+  grad_clip_norm: 5.0
+  amp: true
+  scheduler_factor: 0.5
+  scheduler_patience: 5
+  min_lr: 1.0e-7
+  save_every: 10
+  resume: null
+  pretrained_diffwave_checkpoint: null
+
+sampler:
+  mode: full
+  seed: 1234
+  fast_schedule: [0.0001, 0.001, 0.01, 0.05, 0.2, 0.35]
+
+validation:
+  eval_interval: 5
+  max_sampling_batches: 2
+  seed: 1234
+  best_metric: si_snri
+
+metrics:
+  alignment_policy: crop
+  eps: 1.0e-8
+  min_db: null
+  max_db: null
+
+logging:
+  tensorboard: true
+  jsonl: true
+
+evaluation:
+  noisy_mix_ratio: 0.2
+  save_audio_limit: -1
+  save_diffusion_steps: false
+  diffusion_example_limit: 2
+  diffusion_step_interval: 5

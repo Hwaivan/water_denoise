@@ -9,10 +9,10 @@ set -euo pipefail
 # ===================== 参数配置 =====================
 
 PROJECT_DIR="/data/huayifan/water_denoise/cdiffuse_workspace"
-GPU_ID="0"
+GPU_ID="1"
 
 # 训练实验名称
-EXP_NAME="cdiffuse_water_base"
+EXP_NAME="cdiffuse_water_base_modified"
 RUN_DIR="${PROJECT_DIR}/runs/${EXP_NAME}"
 
 # 优先使用训练时保存的 runtime_config，保证测试与训练参数一致
@@ -20,12 +20,12 @@ CONFIG_FILE="${RUN_DIR}/runtime_config.yaml"
 CHECKPOINT_FILE="${RUN_DIR}/checkpoints/best.pt"
 
 # 测试集：每行格式 noisy<TAB>clean
-# TEST_PAIR_LIST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/test/list/snr_-5dB.list"
-TEST_PAIR_LIST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/test/list/snr_0dB.list"
+TEST_PAIR_LIST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/test/list/snr_-5dB.list"
+# TEST_PAIR_LIST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/test/list/snr_0dB.list"
 
 # 本次测试名称
-# TEST_NAME="snr_-5dB"
-TEST_NAME="snr_0dB"
+TEST_NAME="snr_-5dB_real"
+# TEST_NAME="snr_0dB"
 OUTPUT_DIR="${RUN_DIR}/evaluation/${TEST_NAME}"
 RUNTIME_CONFIG="${OUTPUT_DIR}/test_runtime.yaml"
 

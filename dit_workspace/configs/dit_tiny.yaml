@@ -1,0 +1,112 @@
+experiment:
+  name: dit_tiny
+  output_dir: runs/dit_tiny
+  seed: 42
+  deterministic: true
+data:
+  data_mode: paired
+  sample_rate: 16000
+  segment_seconds: 0.016
+  train_manifest: data/train_pairs.txt
+  valid_manifest: data/valid_pairs.txt
+  test_manifest: data/test_pairs.txt
+  noise_manifest: null
+  snr_min: -5.0
+  snr_max: 20.0
+  mono: true
+  num_workers: 0
+  segment_validation: false
+  silence_threshold: 1.0e-08
+  shared_peak_limit: null
+stft:
+  n_fft: 64
+  win_length: 48
+  hop_length: 16
+  window: hann
+  center: true
+  normalized: false
+  onesided: true
+compression:
+  alpha: 0.5
+  beta: 0.15
+  crop_frames: 16
+model:
+  name: dit
+  depth: 2
+  hidden_size: 64
+  num_heads: 4
+  mlp_ratio: 4
+  patch_size:
+  - 4
+  - 8
+  dropout: 0.0
+  adaLN_zero: true
+  position_embedding: sincos_2d
+  max_tokens: 8192
+sampler:
+  num_steps: 2
+  predictor: euler_maruyama
+  corrector: annealed_langevin
+  corrector_steps: 1
+  corrector_step_size: 0.5
+  use_ema: true
+  name: pc
+training:
+  optimizer: adam
+  learning_rate: 0.0001
+  weight_decay: 0.0
+  epochs: 1
+  batch_size: 1
+  amp: false
+  gradient_clip_norm: 1.0
+  ema_decay: 0.999
+  scheduler: reduce_on_plateau
+  scheduler_factor: 0.5
+  scheduler_patience: 5
+  min_lr: 1.0e-07
+  save_every: 1
+  resume: null
+  auxiliary_waveform_weight: 0.0
+validation:
+  eval_interval: 1
+  max_sampling_batches: 1
+  seed: 1234
+metrics:
+  alignment_policy: crop
+  eps: 1.0e-08
+  min_db: null
+  max_db: null
+logging:
+  tensorboard: true
+  jsonl: true
+distributed:
+  use_ddp: true
+  data_parallel: false
+inference:
+  seed: 1234
+  chunk_seconds: 0.016
+  overlap_seconds: 0.004
+  fallback_on_oom: true
+representation:
+  type: complex_ri
+  phase_source: noisy
+process:
+  type: score
+  noise_convention: circular_complex_unit_energy
+  score:
+    sde: ouve
+    ouve_variant: water_denoise
+    T: 1.0
+    t_eps: 0.03
+    gamma: 1.5
+    sigma_min: 0.05
+    sigma_max: 0.5
+    variance_floor: 1.0e-12
+  ddpm:
+    num_steps: 1000
+    beta_schedule: linear
+    beta_start: 0.0001
+    beta_end: 0.02
+    prediction_type: epsilon
+  flow:
+    source: gaussian

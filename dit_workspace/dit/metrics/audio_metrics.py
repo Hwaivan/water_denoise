@@ -1,7 +1,8 @@
-"""Audio metrics aligned with ``sgmse_workspace`` plus CDiffuSE wrappers."""
+"""Scale-dependent SDR and SI-SNR with explicit invalid-sample handling."""
 
 from typing import Any, Dict, List, Optional, Tuple
 
+import numpy as np
 import torch
 
 
@@ -33,33 +34,27 @@ def _align(
 
 
 def scale_dependent_sdr(
-    estimate: torch.Tensor,
-    reference: torch.Tensor,
-    eps: float = 1.0e-8,
+    estimate: torch.Tensor, reference: torch.Tensor, eps: float = 1.0e-8
 ) -> torch.Tensor:
-    """Return signal-to-error SDR, matching ``sgmse_workspace``."""
+    """Return signal-to-error SDR, not BSS-Eval filtered SDR."""
     signal = reference.square().sum(dim=-1)
     error = (estimate - reference).square().sum(dim=-1)
     return 10.0 * torch.log10((signal + eps) / (error + eps))
 
 
 def si_snr(
-    estimate: torch.Tensor,
-    reference: torch.Tensor,
-    eps: float = 1.0e-8,
+    estimate: torch.Tensor, reference: torch.Tensor, eps: float = 1.0e-8
 ) -> torch.Tensor:
-    """Return SI-SNR, matching ``sgmse_workspace`` implementation."""
+    """Return scale-invariant SNR after independent mean removal."""
     estimate = estimate - estimate.mean(dim=-1, keepdim=True)
     reference = reference - reference.mean(dim=-1, keepdim=True)
     reference_energy = reference.square().sum(dim=-1, keepdim=True)
-    scale = (
-        (estimate * reference).sum(dim=-1, keepdim=True)
-        / reference_energy.clamp_min(eps)
-    )
+    scale = (estimate * reference).sum(dim=-1, keepdim=True) / reference_energy.clamp_min(eps)
     target = scale * reference
     residual = estimate - target
     target_energy = target.square().sum(dim=-1).clamp_min(eps)
     residual_energy = residual.square().sum(dim=-1)
+    # Relative numerical floor preserves scale invariance for exact estimates.
     ratio = target_energy / (residual_energy + eps * target_energy)
     return 10.0 * torch.log10(ratio.clamp_min(eps))
 
@@ -74,17 +69,14 @@ def compute_audio_metrics(
     min_db: Optional[float] = None,
     max_db: Optional[float] = None,
 ) -> List[Dict[str, Any]]:
-    """Compute SDR/SDRi/SI-SNR/SI-SNRi per sample."""
-    enhanced, _ = _as_batch(enhanced)
+    """Compute independent rows and mark silence/non-finite samples invalid."""
+    enhanced, single = _as_batch(enhanced)
     clean, _ = _as_batch(clean)
     noisy, _ = _as_batch(noisy)
-
     if not enhanced.shape[0] == clean.shape[0] == noisy.shape[0]:
         raise ValueError("Metric batch sizes must match")
-
     enhanced, clean, noisy = _align(enhanced, clean, noisy, alignment_policy)
     rows: List[Dict[str, Any]] = []
-
     for index in range(clean.shape[0]):
         values = (enhanced[index], clean[index], noisy[index])
         if not all(torch.isfinite(value).all() for value in values):
@@ -93,26 +85,15 @@ def compute_audio_metrics(
         if clean[index].square().sum() <= eps:
             rows.append({"valid": False, "error": "silent_reference"})
             continue
-
-        input_sdr = scale_dependent_sdr(
-            noisy[index : index + 1], clean[index : index + 1], eps
-        )[0]
-        output_sdr = scale_dependent_sdr(
-            enhanced[index : index + 1], clean[index : index + 1], eps
-        )[0]
-        input_si = si_snr(
-            noisy[index : index + 1], clean[index : index + 1], eps
-        )[0]
-        output_si = si_snr(
-            enhanced[index : index + 1], clean[index : index + 1], eps
-        )[0]
-
+        input_sdr = scale_dependent_sdr(noisy[index : index + 1], clean[index : index + 1], eps)[0]
+        output_sdr = scale_dependent_sdr(enhanced[index : index + 1], clean[index : index + 1], eps)[0]
+        input_si = si_snr(noisy[index : index + 1], clean[index : index + 1], eps)[0]
+        output_si = si_snr(enhanced[index : index + 1], clean[index : index + 1], eps)[0]
         metric_values = [input_sdr, output_sdr, input_si, output_si]
         if min_db is not None or max_db is not None:
             low = -float("inf") if min_db is None else float(min_db)
             high = float("inf") if max_db is None else float(max_db)
             metric_values = [value.clamp(low, high) for value in metric_values]
-
         input_sdr, output_sdr, input_si, output_si = metric_values
         rows.append(
             {
@@ -127,43 +108,43 @@ def compute_audio_metrics(
                 "error": "",
             }
         )
-
     return rows
 
 
-def metric_row(
-    raw: torch.Tensor,
-    final: torch.Tensor,
-    clean: torch.Tensor,
-    noisy: torch.Tensor,
-    sample_rate: int = 16000,
-    alignment_policy: str = "crop",
-    eps: float = 1.0e-8,
-) -> Dict[str, Any]:
-    """Backward-compatible wrapper used by ``cdiffuse_workspace/evaluate.py``."""
-    raw_row = compute_audio_metrics(
-        raw, clean, noisy, sample_rate, alignment_policy, eps
-    )[0]
-    final_row = compute_audio_metrics(
-        final, clean, noisy, sample_rate, alignment_policy, eps
-    )[0]
-
-    if not raw_row.get("valid", False):
-        return raw_row
-    if not final_row.get("valid", False):
-        return final_row
-
-    return {
-        "input_sdr": raw_row["input_sdr"],
-        "raw_output_sdr": raw_row["output_sdr"],
-        "final_output_sdr": final_row["output_sdr"],
-        "raw_sdri": raw_row["sdri"],
-        "final_sdri": final_row["sdri"],
-        "input_si_snr": raw_row["input_si_snr"],
-        "raw_output_si_snr": raw_row["output_si_snr"],
-        "final_output_si_snr": final_row["output_si_snr"],
-        "raw_si_snri": raw_row["si_snri"],
-        "final_si_snri": final_row["si_snri"],
-        "valid": True,
-        "error": "",
+def summarize_metric_rows(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Aggregate valid metric rows with quartiles and invalid count."""
+    valid = [row for row in rows if row.get("valid", False)]
+    names = (
+        "input_sdr",
+        "output_sdr",
+        "sdri",
+        "input_si_snr",
+        "output_si_snr",
+        "si_snri",
+        "inference_time",
+        "rtf",
+        "duration",
+        "nfe",
+    )
+    summary: Dict[str, Any] = {
+        "count": len(rows),
+        "valid_count": len(valid),
+        "invalid_count": len(rows) - len(valid),
     }
+    for name in names:
+        values = np.asarray(
+            [row[name] for row in valid if name in row], dtype=np.float64
+        )
+        if values.size:
+            summary[name] = {
+                "mean": float(values.mean()),
+                "std": float(values.std()),
+                "median": float(np.median(values)),
+                "p25": float(np.percentile(values, 25)),
+                "p75": float(np.percentile(values, 75)),
+            }
+        else:
+            summary[name] = {stat: None for stat in ("mean", "std", "median", "p25", "p75")}
+    return summary
+
+

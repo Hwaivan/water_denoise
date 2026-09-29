@@ -1,0 +1,274 @@
+{
+  "torch_version": "2.2.2",
+  "device": "cpu",
+  "cuda_available": false,
+  "seed": 42,
+  "tiny": [
+    {
+      "process": "score",
+      "representation": "complex_ri",
+      "input_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "concatenated_shape": [
+        1,
+        4,
+        33,
+        17
+      ],
+      "output_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "patch_grid": [
+        9,
+        3
+      ],
+      "token_count": 27,
+      "total_parameters": 190720,
+      "training_geometry": {
+        "patch_grid": [
+          9,
+          2
+        ],
+        "token_count": 18,
+        "total_parameters": 190720
+      },
+      "one_step_loss": 20.00576400756836,
+      "waveform_shape": [
+        1,
+        256
+      ],
+      "nfe": 4,
+      "peak_gpu_memory": null
+    },
+    {
+      "process": "ddpm",
+      "representation": "complex_ri",
+      "input_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "concatenated_shape": [
+        1,
+        4,
+        33,
+        17
+      ],
+      "output_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "patch_grid": [
+        9,
+        3
+      ],
+      "token_count": 27,
+      "total_parameters": 190720,
+      "training_geometry": {
+        "patch_grid": [
+          9,
+          2
+        ],
+        "token_count": 18,
+        "total_parameters": 190720
+      },
+      "one_step_loss": 0.48565182089805603,
+      "waveform_shape": [
+        1,
+        256
+      ],
+      "nfe": 3,
+      "peak_gpu_memory": null
+    },
+    {
+      "process": "flow",
+      "representation": "complex_ri",
+      "input_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "concatenated_shape": [
+        1,
+        4,
+        33,
+        17
+      ],
+      "output_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "patch_grid": [
+        9,
+        3
+      ],
+      "token_count": 27,
+      "total_parameters": 190720,
+      "training_geometry": {
+        "patch_grid": [
+          9,
+          2
+        ],
+        "token_count": 18,
+        "total_parameters": 190720
+      },
+      "one_step_loss": 0.4870340824127197,
+      "waveform_shape": [
+        1,
+        256
+      ],
+      "nfe": 3,
+      "peak_gpu_memory": null
+    },
+    {
+      "process": "score",
+      "representation": "magnitude",
+      "input_shape": [
+        1,
+        1,
+        33,
+        17
+      ],
+      "concatenated_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "output_shape": [
+        1,
+        1,
+        33,
+        17
+      ],
+      "patch_grid": [
+        9,
+        3
+      ],
+      "token_count": 27,
+      "total_parameters": 184544,
+      "training_geometry": {
+        "patch_grid": [
+          9,
+          2
+        ],
+        "token_count": 18,
+        "total_parameters": 184544
+      },
+      "one_step_loss": 146.29315185546875,
+      "waveform_shape": [
+        1,
+        256
+      ],
+      "nfe": 4,
+      "peak_gpu_memory": null
+    },
+    {
+      "process": "ddpm",
+      "representation": "magnitude",
+      "input_shape": [
+        1,
+        1,
+        33,
+        17
+      ],
+      "concatenated_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "output_shape": [
+        1,
+        1,
+        33,
+        17
+      ],
+      "patch_grid": [
+        9,
+        3
+      ],
+      "token_count": 27,
+      "total_parameters": 184544,
+      "training_geometry": {
+        "patch_grid": [
+          9,
+          2
+        ],
+        "token_count": 18,
+        "total_parameters": 184544
+      },
+      "one_step_loss": 0.9785603880882263,
+      "waveform_shape": [
+        1,
+        256
+      ],
+      "nfe": 3,
+      "peak_gpu_memory": null
+    },
+    {
+      "process": "flow",
+      "representation": "magnitude",
+      "input_shape": [
+        1,
+        1,
+        33,
+        17
+      ],
+      "concatenated_shape": [
+        1,
+        2,
+        33,
+        17
+      ],
+      "output_shape": [
+        1,
+        1,
+        33,
+        17
+      ],
+      "patch_grid": [
+        9,
+        3
+      ],
+      "token_count": 27,
+      "total_parameters": 184544,
+      "training_geometry": {
+        "patch_grid": [
+          9,
+          2
+        ],
+        "token_count": 18,
+        "total_parameters": 184544
+      },
+      "one_step_loss": 0.9737291932106018,
+      "waveform_shape": [
+        1,
+        256
+      ],
+      "nfe": 3,
+      "peak_gpu_memory": null
+    }
+  ],
+  "small_geometry": {
+    "patch_grid": [
+      65,
+      16
+    ],
+    "token_count": 1040,
+    "total_parameters": 32536000
+  }
+}

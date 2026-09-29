@@ -1,0 +1,386 @@
+[
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\__init__.py",
+    "Hash": "35BAF7399EA35B5BCF816E1FA1BEDFB2C04423A5E37F0BCF6B77BED0E80315DB"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\evaluate.py",
+    "Hash": "C4912272EBD3C90B4CDF0509FB86471ADB7A6750D90EEF91C49DB41896BCF3A8"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\infer.py",
+    "Hash": "518AAF3EE1361E614C03FF21A91A1990AAF52A1E97E108A353F5F0311FC48867"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\README.md",
+    "Hash": "F63A5DBAD7DCFEE8E8DBB1EE8E6291813306CAE72F2648A59821407D1F1B24F4"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\THIRD_PARTY_NOTICES.md",
+    "Hash": "56A57F88879C9E522AB7497D4585DBF452AD9564713C01193AA12C9C31CCB274"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\train.py",
+    "Hash": "F6C56EA34965BD48C6D7F37E0576BD662334E4F06720F3A0CAEC3EBBFC2E4AA3"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\configs\\sgmse_water_full.yaml",
+    "Hash": "1F385440291D642D5CD77C04C4ADEE07A017939F87181597B2804E3CFAF5AB85"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\configs\\sgmse_water_small.yaml",
+    "Hash": "4875A6D12000DCDC4DA9DA50B87F07814D3BE1D6117D43C2094F0777C3673F56"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\data\\README.md",
+    "Hash": "17C95F8356B8903CE1EA655FAD5F3542BF72F7B699C3D3E0C4EE483643FD7D3F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\__init__.py",
+    "Hash": "AF442636CAA68A44D6865F2F086773C5699E16E38A53020FE0C5F1ECD847FDEF"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\factory.py",
+    "Hash": "965808C55F302510BF180522388A48404A1D117F077B73B1BD6BF32D5600E16E"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\data\\__init__.py",
+    "Hash": "EFCB1E33A086B6A7A9BC0F42C1DC1367173E6EAE75B9FA6A00993F647C9D3590"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\data\\audio_io.py",
+    "Hash": "8A246AAF654124D1C5CE9A800A1139E2473A50C16AD574CFA9288256AF4E45D2"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\data\\dataset.py",
+    "Hash": "0CAC19B88EBF5E84392479C12630FD6E376E73881BCBA4CCD82CC0E674462FD3"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\diffusion\\__init__.py",
+    "Hash": "1245CEA6B659B40EAE0B1B6B89EA67FB3A5CBAB1E0A43E6E91F6C5B1945AE19D"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\diffusion\\losses.py",
+    "Hash": "C0B8C6EF6CA4EF1A7FCC3EA5638067338F20F0DDBA4DCCD8201F32E2A8750D6E"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\diffusion\\ouve.py",
+    "Hash": "07967723980E1403A7C3E3893DC6FABA66B85840AE3703E56B537B32CC42D15F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\diffusion\\sampler.py",
+    "Hash": "AEB2BB45553C60279FA6369B4ADA704E62FD29FC96D4086F180661C7CC0ECD75"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\engine\\__init__.py",
+    "Hash": "6760ADE14826327CD4C982781D0F2B9AF30D7E5905D653172AEBB0867271D86A"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\engine\\evaluator.py",
+    "Hash": "0F807BCD4629D0428207A90ED9C070845788E1E7EA827B40D94AC4D6EECF29A0"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\engine\\trainer.py",
+    "Hash": "8FC8A0A313EEE989631DFE51B892E1B2CE728C50CBD4DA3449E6637D6B2E6FDE"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\metrics\\__init__.py",
+    "Hash": "832C29717781FDDC115D987EBF773376686E9915CE330DA9881CF0E2BD5D7998"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\metrics\\audio_metrics.py",
+    "Hash": "0C622A6F16A28000FBE394E35BC5E295DF74EE23AB5BBC1199BE4B49CF170C39"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\models\\__init__.py",
+    "Hash": "6B418A6845DE26ECD55555C51FE1287020A73D6749D1D4B6F771CE787DD43959"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\models\\blocks.py",
+    "Hash": "F6630CDCC611CF1BD5741AD73448136D05B56BCB63F9A47AB8BEDFF1270C5E7F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\models\\ncsnpp.py",
+    "Hash": "AC1490F285360DE96985A1BCABE595654CDD56C5DB2F7F7E032D1BE202655EA9"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\__init__.py",
+    "Hash": "E40BE8321AD50B27DAF7A4BE9CB9B81F1D6A58511483A08FFD02C57C07AD7EC8"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\checkpoint.py",
+    "Hash": "8FAF7A8A297581CAA25F110161C3392916A47A453DD47669FA1FCA97761E567A"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\config.py",
+    "Hash": "20C2C936508D50C51F094366C5EEC9EB80CD58DC1E3DDF7833C2BCFBF1302760"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\distributed.py",
+    "Hash": "52A8C10A9F987A82F13E35F2DD8C585298C71D45240DF58E371844E5954DA91F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\ema.py",
+    "Hash": "4DCFBE0864C2B76C0D34A25F87A8684B83AD192FE488FF37247A4F407B7D6B18"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\logging.py",
+    "Hash": "9F803DA31147871FE8F5E01A697765434E99B2D2DA376BB0086B3E3793184F42"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\seed.py",
+    "Hash": "0760A9825F1C6D5B5A7DE5CE428433B6772FC88C9987135078BA15D957DD3A6F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\sgmse\\utils\\stft.py",
+    "Hash": "D91E24B9388E59A35E0BE18E7299C0482F1058A2EE158EE1B06F399B3154B653"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\__init__.py",
+    "Hash": "05E5741520D41241FF75191D19735BA399D08897623AC3763D5E8F480FBD5AA9"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\conftest.py",
+    "Hash": "BEFE51914680A8D1107BF23CAB3A463023ACAA90778634239D93D556C1C2061E"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_checkpoint.py",
+    "Hash": "7CE4EB28C95B85FF2D6E0F3DCD3549F9F64733F87FE493BDDB57AC825CB10769"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_dataset.py",
+    "Hash": "8CC01AEE3A254A0BA21E08BB1340577BCEAAB2E130AD0FAD5135BDBDE5FE65B4"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_distributed.py",
+    "Hash": "EBD65489DD9F9B8B4849ED10745383338604B449E9ECA1784B65F9D392F527AB"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_metrics.py",
+    "Hash": "8B13827DC81AE536251CBC8958F8B1D0361EC255C942C046F5C50292C245D852"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_ouve.py",
+    "Hash": "1A0F918C6C919D003AB512509D8E09FCE08D30E55F29010CFB1D75388161E010"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_sampler.py",
+    "Hash": "B10AF00734BE140ABD27A430110C81C1EA122E9002870A7039B1D040FB9CC6ED"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_score_model.py",
+    "Hash": "6FF6BEC8EDCADDA06653A023141F6E6FA07875237C8E4DC7B066102DCC132046"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_stft.py",
+    "Hash": "0058756C6DFB5B6C8A61D5BB14517B5D847BAEC19216367F3A3E34CB9E6C8CF9"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\sgmse_workspace\\tests\\test_training_smoke.py",
+    "Hash": "8C29CCF73777E4168E9D608DDF663E614FAD2E93ECADC6CAA5E6E8BF7FBCC1B6"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\evaluate.py",
+    "Hash": "7F681935D3AEB191A3591DB3A048C7A6457EACEB485237126F2A786AD91F11D7"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\infer.py",
+    "Hash": "40947B7DB5334922FE2638CB15921E5DDE77899AA25A337B265E8B4771BD4CF9"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\pretrain_diffwave.py",
+    "Hash": "4D72A4C459B0BFE49AA5A835F24B96393F5630F369429C6A8A2AE1E013B86F74"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\README.md",
+    "Hash": "8A2CDD58C4CD6EB46444CE2DCC7B8ED74DAD71474D9E89A533AC9EA1FFEA8A2F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\train.py",
+    "Hash": "6BF9424DCB7D9A7C10FAF045E3F2BD1B40F053254098A1A9A8ACC9AF58B256D6"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\__init__.py",
+    "Hash": "9C1735F2C8529168DC6DB44D238E4680176D2E9C4B6BC0BF7AADA37BE1D39883"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\factory.py",
+    "Hash": "D177F5A5EB07ED22341C2A58E0B665FD8897080369CB3086F385213709E1A949"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\data\\__init__.py",
+    "Hash": "09B2E40858F43697CCD5DFCF217E3F80F0C136E3710E85948ADC23BA6D42C480"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\data\\audio_io.py",
+    "Hash": "E957C92BE53E273F3733D7DACD2DE299462C4BE04532B1023E895B1E5353FA7C"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\data\\dataset.py",
+    "Hash": "C587575DB75D2EA0158A2306229FB670E8BA6A92A7C22FCFC841C535C9770245"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\diffusion\\__init__.py",
+    "Hash": "5EB28690238C77631F894B25605F7D22F924FD76A00FB218CEC03BD0C7EB41FC"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\diffusion\\fast_sampler.py",
+    "Hash": "5F9999A0B2CAB6EC795D4175B4C42D7163C705FEB1502F640CCD4DCE387B52DB"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\diffusion\\losses.py",
+    "Hash": "36E1797EF539E456F630A7AE6C7AEFABC272861CEE6B29F421A9E8BCED577D16"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\diffusion\\process.py",
+    "Hash": "B21D9C6D98FEE8D6873CF1604A67FDB4E7B92298A22BE08A6220534F140648E3"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\diffusion\\sampler.py",
+    "Hash": "AA9B826B2A6D738296BE891801CCF7DA236FA9A7CA97499D3F6901C58A540C30"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\diffusion\\schedule.py",
+    "Hash": "8B0A2BDD044A22BFDF86F9A9E07C734611EEA6A1F0FD8CE7D596B8633C2E5012"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\engine\\__init__.py",
+    "Hash": "FF897DCC95A4D7863AA74DA60A7B2CCD9985260FEE8C7643547C6A59C6003BF8"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\engine\\trainer.py",
+    "Hash": "DCDCD219B0444D1B3242B34FB3A2FFD9A9420145923DAE11A29E01D171D0B48F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\metrics\\__init__.py",
+    "Hash": "762C3D655C29B863F9FA299A28FCAA6D7CEB5FEEE4F268956D74277AA1664474"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\metrics\\audio_metrics.py",
+    "Hash": "253E2A8E8ABF14EF4548499A824BEB713274E502AC181AE07F254176123F718F"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\models\\__init__.py",
+    "Hash": "E53F565418331B82B578A4EC42C3D5A9C3D93D9C9850DCE9F144B130743F5017"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\models\\conditioner.py",
+    "Hash": "6BAEA43B329B36B1DCAC511C3C00C0B2C29DE2686069014C3EBDB944958FB2FC"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\models\\diffusion_embedding.py",
+    "Hash": "C89050196A4A4C38BC868EC3BE8529BC087671AED2D35B1681660B2FAF8F7F8A"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\models\\diffwave.py",
+    "Hash": "087234882EBC1E548964495CA5E04BAD6477348253D3A6479C208877775524E8"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\models\\residual_block.py",
+    "Hash": "14A321A569008F71C617382B504617754AC34348DA3C5B5F78213D5A229171E2"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\utils\\__init__.py",
+    "Hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\utils\\checkpoint.py",
+    "Hash": "55414A9332F7B35C07B3EF27D5050B46A6A863C9CF1AF8F97A4B5186449EB925"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\utils\\config.py",
+    "Hash": "182C29576BE158C2668C10767E9D35CC7D8BAFD8C96217EF00B71193050A69F9"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\cdiffuse\\utils\\ema.py",
+    "Hash": "8480105FB43E50C07C7FE0B991D08FE045C1320C6BF5942801C2BFA0CC5B7C8C"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\configs\\cdiffuse_water_base.yaml",
+    "Hash": "EF72C3C20383001E27722FD031C0ED573F6094F745559D187B5CCF50706645DD"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\configs\\cdiffuse_water_large.yaml",
+    "Hash": "FDC8090CE39B6EDFB6AEE7020FF41363B4FA883E1499CB44806F73BAD0CAEA51"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\configs\\diffwave_clean_pretrain.yaml",
+    "Hash": "53082339BFC0F4D395D53FEF8DD7F6504EE4C329FD7F4E4E37EB4EC004D49AB3"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\tests\\test_core.py",
+    "Hash": "4E0A9852D6650C2F82C166154DD7754460A581ABB4D63C38E2F684414FAF0D6D"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\tests\\test_model_sampler.py",
+    "Hash": "3ACA84DD3BD625200B512A144EF6F5137C4E4B39109E340F82E834D2FD9A9618"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\cdiffuse_workspace\\tests\\test_smoke_train.py",
+    "Hash": "7ED1261B6BE3060E18C644C6D7D4221C75AC1163DFD41D9C6A93FA3B06E5411A"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\datasets\\__init__.py",
+    "Hash": "3C65DC65A4A3D05371610B8B3DB7FC178E5DF6951AAF0B289A44213A1210B274"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\datasets\\audio_dataset.py",
+    "Hash": "FB7747C66001AC8FC8EDADD3698BE96C8F00C69FA17714BDD53D02C49D482D27"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\datasets\\audio_io.py",
+    "Hash": "C9C6B9FFEF1961EEDB94D21D82C6C1658D7D3E1F5BB71ACF092396488AAAAB41"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\datasets\\factory.py",
+    "Hash": "E8DD170B108E767E66229E7D5CB073CE0D867C90447820B40C0F5311FA73641D"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\datasets\\mixing.py",
+    "Hash": "F433C7922F882CC05DD0BAC12DB44F3111A0D83190BBFEABD5D9F15165C11114"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\metrics\\__init__.py",
+    "Hash": "33525A1A227CA0A35EB4A1B35BDDB13B2E3D4BA0D107C4AA9C3872F1D32BBEDE"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\metrics\\enhancement_metrics.py",
+    "Hash": "16B817676615B40F032B00D9B5B7B2AA5DEDCCAEEB5108BE834BDA9C3188992A"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\engine\\__init__.py",
+    "Hash": "40919C8C239071CDA1924234B05CC48527BF7E02DB2609AE31E2958C31834EC0"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\engine\\evaluator.py",
+    "Hash": "13DFC3865BC5F6A43B0410811E2ADC36CE521DBDFFB3AB459E7CE9B1E6318606"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\engine\\trainer.py",
+    "Hash": "4C44AEFA59CCC37A5BC19BDA1FB190E975A19483CEF70A632A0C890DA7212259"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\utils\\__init__.py",
+    "Hash": "7FA4298796C367A2D1DBF0F814B68DE3B7894D237549B3F4F2D80D105FDC0419"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\utils\\audio.py",
+    "Hash": "9098AC191B15C79FB067DD06CA06EA060082CE80405385F3DA84F22EEBEF4010"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\utils\\checkpoint.py",
+    "Hash": "5DB48AA75177436483FC3ED47FEBB5AE832927011F071D8514D941BB19D81F74"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\utils\\config.py",
+    "Hash": "914551ABA5E02459EE3D7E91660A45CBF364125E8F1854EF6B0AC8023B66BF45"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\utils\\logger.py",
+    "Hash": "6CA08ACD4255FFBAB7F33441F013A2F1611557067DB3CAE4A89FFB057797EC59"
+  },
+  {
+    "Path": "C:\\Users\\user\\Documents\\water_denoise\\utils\\seed.py",
+    "Hash": "1C5C77CB7EDAAA0A2D5634C0156CD555E956019688D2643F8F79930127A143BC"
+  }
+]
