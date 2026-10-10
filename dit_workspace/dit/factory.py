@@ -1,5 +1,6 @@
 """Only component assembly entry point used by train, evaluate and infer."""
 from dit.models import ConditionalDiT
+from dit.models.frame_dit import FrameConditionalDiT
 from dit.representations import SpectralRepresentation
 from dit.processes.score_sde import ScoreProcess
 from dit.processes.ddpm import DDPMProcess
@@ -17,7 +18,17 @@ def build_representation(config):
 
 
 def build_model(config, representation):
-    return ConditionalDiT(channels=representation.channels, **config["model"])
+    values = dict(config["model"])
+    tokenization = values.pop("tokenization", "patch2d")
+    if tokenization == "patch2d":
+        return ConditionalDiT(channels=representation.channels, **values)
+    if tokenization == "frame1d":
+        # A baseline-derived config may still contain patch-only geometry.
+        values.pop("patch_size", None)
+        stft = config["stft"]
+        bins = stft["n_fft"] // 2 + 1 if stft.get("onesided", True) else stft["n_fft"]
+        return FrameConditionalDiT(frequency_bins=bins, channels=representation.channels, **values)
+    raise ValueError("Unknown model tokenization: " + str(tokenization))
 
 
 def build_process(config, representation):
