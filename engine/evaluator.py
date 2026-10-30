@@ -38,20 +38,45 @@ def evaluate_dataset(
                 "input_snr": float(batch["input_snr"][index]),
             }
             row.update({name: float(values[index].cpu()) for name, values in metrics.items()})
+            # if save_audio_examples and len(rows) < max_audio_examples:
+            #     valid_length = int(lengths[index].item())
+            #     audio_dir = Path(output_dir) / "audio_examples"
+            #     stem = "{:04d}".format(len(rows))
+            #     save_audio(
+            #         str(audio_dir / (stem + "_mixture.wav")),
+            #         mixture[index, :valid_length],
+            #         sample_rate,
+            #     )
+            #     save_audio(
+            #         str(audio_dir / (stem + "_target.wav")),
+            #         target[index, :valid_length],
+            #         sample_rate,
+            #     )
+            #     save_audio(
+            #         str(audio_dir / (stem + "_enhanced.wav")),
+            #         outputs["waveform"][index, :valid_length],
+            #         sample_rate,
+            #     )
             if save_audio_examples and len(rows) < max_audio_examples:
                 valid_length = int(lengths[index].item())
                 audio_dir = Path(output_dir) / "audio_examples"
-                stem = "{:04d}".format(len(rows))
+
+                # 保留原 noisy 文件名，同时加序号避免重名
+                original_stem = Path(batch["mixture_path"][index]).stem
+                stem = "{:04d}_{}".format(len(rows), original_stem)
+
                 save_audio(
                     str(audio_dir / (stem + "_mixture.wav")),
                     mixture[index, :valid_length],
                     sample_rate,
                 )
+
                 save_audio(
                     str(audio_dir / (stem + "_target.wav")),
                     target[index, :valid_length],
                     sample_rate,
                 )
+
                 save_audio(
                     str(audio_dir / (stem + "_enhanced.wav")),
                     outputs["waveform"][index, :valid_length],

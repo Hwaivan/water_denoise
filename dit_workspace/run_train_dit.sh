@@ -12,7 +12,7 @@ PROJECT_DIR="/data/huayifan/water_denoise/dit_workspace"
 
 # ---------------- GPU ----------------
 # 单卡：
-GPU_IDS="0"
+GPU_IDS="1"
 NUM_GPUS="1"
 
 # 多卡示例：
@@ -26,7 +26,24 @@ NUM_GPUS="1"
 # ---------------- 基础配置 ----------------
 # Score + complex STFT
 # BASE_CONFIG="configs/dit_score_complex_small.yaml"
-BASE_CONFIG="configs/dit_score_complex_small_frame=256.yaml"
+# BASE_CONFIG="configs/dit_score_complex_frame_token_5s.yaml"
+# BASE_CONFIG="configs/dit_score_complex_frame_token_5s_hidSz=1024.yaml"
+# BASE_CONFIG="configs/dit_score_complex_frame_token_5s_hidSz=1024_smallMLP.yaml"
+# BASE_CONFIG="configs/dit_score_complex_frame_token_5s_hidSz=1024_smallMLP_depth=10.yaml"
+# BASE_CONFIG="configs/dit_score_complex_frame_token_5s_hidSz=1024_smallMLP_depth=6.yaml"
+# BASE_CONFIG="configs/dit_score_complex_frame_token_5s_hidSz=1024_hop=128.yaml"
+# BASE_CONFIG="configs/dit_score_magnitude_frame_token_5s_hidSz=512.yaml"
+# BASE_CONFIG="configs/dit_score_magnitude_frame_token_5s_hidSz=768.yaml"
+# BASE_CONFIG="configs/dit_score_log_magnitude_frame_token_5s_hidSz=768.yaml"
+
+# Flow Matching
+BASE_CONFIG="configs/dit_flow_complex_frame_token_5s_hidSz=1024.yaml"
+
+# ---------------- Score Loss ----------------
+# none   : 原始 score MSE
+# sigma2 : sigma^2-weighted score matching
+SCORE_LOSS_WEIGHTING="sigma2"
+# SCORE_LOSS_WEIGHTING="none"
 
 # 其他配置：
 # BASE_CONFIG="configs/dit_score_magnitude_small.yaml"
@@ -34,7 +51,14 @@ BASE_CONFIG="configs/dit_score_complex_small_frame=256.yaml"
 # BASE_CONFIG="configs/dit_flow_complex_small.yaml"
 
 # ---------------- 实验名称 / 保存目录 ----------------
-EXP_NAME="dit_score_complex_frame=256,seg=2s_onthefly"
+# EXP_NAME="dit_score_complex_frame_token_5s_hidSz=1024_smallMLP_real_LogSigma_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
+# EXP_NAME="dit_score_complex_frame_token_5s_hidSz=1024_smallMLP_real_LogSigma_loss=${SCORE_LOSS_WEIGHTING}_onthefly_-10~0dB"
+# EXP_NAME="dit_score_complex_frame_token_5s_hidSz=1024_real_loss=${SCORE_LOSS_WEIGHTING}_onthefly_-10~0dB"
+# EXP_NAME="dit_score_complex_frame_token_5s_real_loss=${SCORE_LOSS_WEIGHTING}_onthefly"
+# EXP_NAME="dit_score_log_magnitude_frame_token_5s_hidSz=768_hop=100_real_loss=${SCORE_LOSS_WEIGHTING}_onthefly_withAMP"
+
+# EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
+EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_numhead=8_smallMLP_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
 
 # 可以随时修改整个实验保存根目录
 RUN_ROOT="${PROJECT_DIR}/runs"
@@ -52,7 +76,8 @@ RUN_DIR="${RUN_ROOT}/${EXP_NAME}"
 #   TRAIN_MANIFEST 为 clean 单列 list
 #   NOISE_MANIFEST 为 noise 单列 list
 #
-DATA_MODE="on_the_fly"
+# DATA_MODE="on_the_fly"
+DATA_MODE="paired"
 
 # ---------------- 训练 / 验证 / 默认测试 list ----------------
 
@@ -60,30 +85,42 @@ DATA_MODE="on_the_fly"
 #   TRAIN_MANIFEST 为 clean 单列 list
 #   NOISE_MANIFEST 为 noise 单列 list
 #   VALID/TEST 继续使用固定 noisy<TAB>clean 配对 list，便于稳定验证/测试
-TRAIN_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/train_16k_signal.list"
-NOISE_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/train_16k_noise.list"
-VALID_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/valid/list/valid_snr_-5dB.list"
-TEST_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/test/list/snr_-5dB.list"
+if [[ "${DATA_MODE}" == "on_the_fly" ]]; then
 
-# ---------------- 在线混噪参数 ----------------
+    TRAIN_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/train_16k_signal.list"
+    NOISE_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/train_16k_noise.list"
+    VALID_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/valid/list/valid_snr_-5dB.list"
+    TEST_MANIFEST="/data/huayifan/water_denoise/data/ShipsEar-12class_W5H1/test/list/snr_-5dB.list"
+
+# paired 模式：
+elif [[ "${DATA_MODE}" == "paired" ]]; then
+
+    TRAIN_MANIFEST="/data/huayifan/water_denoise/data/Zhaoyu/snr_-10_-5_class_all/train/list/train_all_snr.list"
+    VALID_MANIFEST="/data/huayifan/water_denoise/data/Zhaoyu/snr_-10_-5_class_all/test/list/test_all_snr.list"
+    TEST_MANIFEST="/data/huayifan/water_denoise/data/Zhaoyu/snr_-10_-5_class_all/test/list/test_all_snr.list"
+
+fi
+    # ---------------- 在线混噪参数 ----------------
 # paired 模式下这两个参数不会改变已有 noisy/clean 数据
-SNR_MIN="-15"
+# SNR_MIN="-15"
+# SNR_MAX="3"
+SNR_MIN="-10"
 SNR_MAX="0"
 
 # ---------------- 训练参数 ----------------
 SEED="42"
 EPOCHS="100"
-BATCH_SIZE="32"
+BATCH_SIZE="64"
 LEARNING_RATE="0.0001"
 NUM_WORKERS="4"
-AMP="False"
+AMP="true"
 
 # ---------------- 验证参数 ----------------
 EVAL_INTERVAL="5"
 MAX_SAMPLING_BATCHES="2"
 VALIDATION_SEED="1234"
 
-SAVE_EVERY="10"
+SAVE_EVERY="5"
 
 # ---------------- 断点续训 ----------------
 # 留空表示从头训练
@@ -111,21 +148,37 @@ export PYTHONUNBUFFERED=1
 # ============================================================
 # 文件检查
 # ============================================================
+if [[ "${DATA_MODE}" == "paired" ]]; then
 
-if [[ "${DATA_MODE}" != "on_the_fly" ]]; then
-    echo "[ERROR] this script is configured for on_the_fly training; DATA_MODE=${DATA_MODE}" >&2
+    # paired:
+    # TRAIN_MANIFEST = noisy<TAB>clean
+    NOISE_MANIFEST=""
+
+elif [[ "${DATA_MODE}" == "on_the_fly" ]]; then
+
+    if [[ -z "${NOISE_MANIFEST}" ]]; then
+        echo "[ERROR] on_the_fly requires NOISE_MANIFEST" >&2
+        exit 1
+    fi
+
+else
+    echo "[ERROR] DATA_MODE must be paired or on_the_fly" >&2
     exit 1
 fi
 
-if [[ -z "${NOISE_MANIFEST}" ]]; then
-    echo "[ERROR] on_the_fly training requires a non-empty NOISE_MANIFEST" >&2
-    exit 1
-fi
+# if [[ "${DATA_MODE}" != "on_the_fly" ]]; then
+#     echo "[ERROR] this script is configured for on_the_fly training; DATA_MODE=${DATA_MODE}" >&2
+#     exit 1
+# fi
+
+# if [[ -z "${NOISE_MANIFEST}" ]]; then
+#     echo "[ERROR] on_the_fly training requires a non-empty NOISE_MANIFEST" >&2
+#     exit 1
+# fi
 
 for f in \
     "${BASE_CONFIG}" \
     "${TRAIN_MANIFEST}" \
-    "${NOISE_MANIFEST}" \
     "${VALID_MANIFEST}" \
     "${TEST_MANIFEST}"
 do
@@ -134,6 +187,23 @@ do
         exit 1
     fi
 done
+
+if [[ "${DATA_MODE}" == "on_the_fly" ]]; then
+    if [[ -z "${NOISE_MANIFEST}" ]]; then
+        echo "[ERROR] on_the_fly requires NOISE_MANIFEST" >&2
+        exit 1
+    fi
+
+    if [[ ! -f "${NOISE_MANIFEST}" ]]; then
+        echo "[ERROR] noise manifest not found: ${NOISE_MANIFEST}" >&2
+        exit 1
+    fi
+fi
+
+if [[ "${DATA_MODE}" == "on_the_fly" && ! -f "${NOISE_MANIFEST}" ]]; then
+    echo "[ERROR] noise manifest not found: ${NOISE_MANIFEST}" >&2
+    exit 1
+fi
 
 if [[ -n "${RESUME_CHECKPOINT}" && ! -f "${RESUME_CHECKPOINT}" ]]; then
     echo "[ERROR] resume checkpoint not found: ${RESUME_CHECKPOINT}" >&2
@@ -166,7 +236,8 @@ python - \
     "${EVAL_INTERVAL}" \
     "${MAX_SAMPLING_BATCHES}" \
     "${VALIDATION_SEED}" \
-    "${SAVE_EVERY}" <<'PY'
+    "${SAVE_EVERY}" \
+    "${SCORE_LOSS_WEIGHTING}" <<'PY'
 
 import sys
 from pathlib import Path
@@ -194,15 +265,21 @@ import yaml
     max_sampling_batches,
     validation_seed,
     save_every,
+    score_loss_weighting,
 ) = sys.argv[1:]
 
 with open(base_config, "r", encoding="utf-8") as f:
     cfg = yaml.safe_load(f)
 
-if data_mode != "on_the_fly":
-    raise ValueError(f"Expected data_mode=on_the_fly, got {data_mode!r}")
-if not noise_manifest:
-    raise ValueError("on_the_fly training requires noise_manifest")
+if data_mode not in ("paired", "on_the_fly"):
+    raise ValueError(
+        f"Unknown data_mode: {data_mode!r}"
+    )
+
+if data_mode == "on_the_fly" and not noise_manifest:
+    raise ValueError(
+        "on_the_fly training requires noise_manifest"
+    )
 
 # ------------------------------------------------------------
 # Experiment
@@ -240,6 +317,14 @@ cfg["training"]["batch_size"] = int(batch_size)
 cfg["training"]["learning_rate"] = float(learning_rate)
 cfg["training"]["amp"] = amp.lower() == "true"
 cfg["training"]["save_every"] = int(save_every)
+
+if score_loss_weighting not in ("none", "sigma2"):
+    raise ValueError(
+        f"Unknown SCORE_LOSS_WEIGHTING={score_loss_weighting!r}; "
+        "expected 'none' or 'sigma2'"
+    )
+
+cfg["training"]["score_loss_weighting"] = score_loss_weighting
 
 # ------------------------------------------------------------
 # Validation
@@ -280,7 +365,17 @@ print(runtime_path)
 print("Representation :", cfg["representation"]["type"])
 print("Process        :", cfg["process"]["type"])
 print("Sampler        :", cfg["sampler"]["name"])
-print("Patch size     :", cfg["model"]["patch_size"])
+print("Score loss     :", cfg["training"].get("score_loss_weighting", "none"))
+
+tokenization = cfg["model"].get("tokenization", "patch2d")
+print("Tokenization   :", tokenization)
+
+if tokenization == "patch2d":
+    print("Patch size     :", cfg["model"]["patch_size"])
+elif tokenization == "frame1d":
+    print("Frame token    : one STFT time frame = one token")
+else:
+    raise ValueError(f"Unknown tokenization: {tokenization}")
 
 PY
 
@@ -311,6 +406,7 @@ echo
 echo "Epochs                 : ${EPOCHS}"
 echo "Batch size             : ${BATCH_SIZE}"
 echo "Learning rate          : ${LEARNING_RATE}"
+echo "Score loss weighting   : ${SCORE_LOSS_WEIGHTING}"
 echo "Workers                : ${NUM_WORKERS}"
 echo
 echo "Eval interval          : ${EVAL_INTERVAL}"

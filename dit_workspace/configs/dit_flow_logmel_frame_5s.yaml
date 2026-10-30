@@ -1,0 +1,54 @@
+data:
+  data_mode: paired
+  sample_rate: 16000
+  segment_seconds: 5.0
+  # train_manifest / valid_manifest / test_manifest
+  # 保持原有配置
+
+stft:
+  n_fft: 512
+  win_length: 400
+  hop_length: 100
+  window: hann
+  center: true
+  normalized: false
+  onesided: true
+
+representation:
+  type: log_mel
+  mel:
+    n_mels: 128
+    f_min: 0.0
+    f_max: 8000.0
+    scale: slaney
+    norm: slaney
+    power: 2.0
+    log_eps: 1.0e-6
+    normalization: dataset
+    stats_path: data/stats/logmel_128.pt
+
+reconstruction:
+  type: mel_gain_noisy_phase
+
+model:
+  name: dit
+  tokenization: frame1d
+  hidden_size: 768
+  depth: 10
+  num_heads: 12
+  mlp_ratio: 2
+  dropout: 0.0
+  adaLN_zero: true
+  position_embedding: sincos_1d
+  max_tokens: 8192
+
+process:
+  type: flow
+  noise_convention: real_unit_variance
+  flow:
+    source: gaussian
+
+sampler:
+  name: euler
+  num_steps: 10
+  use_ema: true

@@ -30,6 +30,19 @@ def validate_config(config):
         raise NotImplementedError('Only Adam implemented')
     if config['training'].get('scheduler','reduce_on_plateau') != 'reduce_on_plateau':
         raise NotImplementedError('Only ReduceLROnPlateau implemented')
+    score_loss_weighting = config["training"].get(
+        "score_loss_weighting",
+        "none",
+    )
+
+    if score_loss_weighting not in (
+        "none",
+        "sigma2",
+    ):
+        raise ValueError(
+            "score_loss_weighting must be "
+            "'none' or 'sigma2'"
+        )
     if config['training'].get('auxiliary_waveform_weight',0) != 0:
         raise NotImplementedError('Auxiliary waveform loss is not implemented')
     crop = config['compression'].get('crop_frames')

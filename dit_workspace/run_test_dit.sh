@@ -182,6 +182,11 @@ cfg["inference"]["seed"] = int(seed)
 
 process = cfg["process"]["type"]
 
+# Predictor-only ablation
+if process == "score":
+    cfg["sampler"]["corrector"] = "none"
+    cfg["sampler"]["corrector_steps"] = 0
+
 if sampler_override:
     allowed = {
         "score": {"pc"},

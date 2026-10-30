@@ -145,16 +145,65 @@ class DiTTrainer:
                         epoch, batch_index
                     )
                 )
+
+            ####
+            
+            # self.scaler.scale(losses["total"]).backward()
+            # self.scaler.unscale_(self.optimizer)
+            # gradient_norm = torch.nn.utils.clip_grad_norm_(
+            #     self.model.parameters(), self.gradient_clip
+            # )
+            # if not torch.isfinite(gradient_norm):
+            #     raise FloatingPointError("Non-finite gradient norm")
+            # self.scaler.step(self.optimizer)
+            # self.scaler.update()
+            # self.ema.update(unwrap_model(self.model))
+
+            
             self.scaler.scale(losses["total"]).backward()
             self.scaler.unscale_(self.optimizer)
+
             gradient_norm = torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(), self.gradient_clip
+                self.model.parameters(),
+                self.gradient_clip,
+                error_if_nonfinite=False,
             )
+
+            # AMP 允许自动恢复偶发的非有限梯度
             if not torch.isfinite(gradient_norm):
-                raise FloatingPointError("Non-finite gradient norm")
+                if not self.amp_enabled:
+                    raise FloatingPointError(
+                        f"Non-finite gradient norm at "
+                        f"epoch {epoch}, batch {batch_index}"
+                    )
+
+                scale_before = self.scaler.get_scale()
+
+                # GradScaler 会跳过包含 Inf/NaN 梯度的 optimizer.step()
+                self.scaler.step(self.optimizer)
+                self.scaler.update()
+
+                scale_after = self.scaler.get_scale()
+
+                self.optimizer.zero_grad(set_to_none=True)
+
+                print(
+                    f"[AMP overflow] epoch={epoch}, "
+                    f"batch={batch_index}, "
+                    f"scale={scale_before} -> {scale_after}"
+                )
+
+                # 跳过 EMA、global_step 和统计更新
+                continue
+
+            # 正常更新
             self.scaler.step(self.optimizer)
             self.scaler.update()
+
             self.ema.update(unwrap_model(self.model))
+
+            #####
+            
             self.global_step += 1
             totals["loss"] += float(losses["total"].detach())
             totals["grad_norm"] += float(gradient_norm)

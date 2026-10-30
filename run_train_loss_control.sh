@@ -9,17 +9,48 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 # 基础配置
 # ==================================================
 
-BASE_CONFIG="configs/dccrn_base.yaml"
+# BASE_CONFIG="configs/dccrn_base.yaml"
 
 # 实验名称及输出目录
-EXP_NAME="dccrn_snr_m15_0_si_snr=1.0"
+# EXP_NAME="dccrn_snr_m15_0_si_snr=1.0"
+EXP_NAME="dccrn_zys_fixed"
 OUTPUT_DIR="logs/${EXP_NAME}"
 
+# ==================================================
+# 数据模式
+# ==================================================
+# 可选：
+#   paired         : 固定 noisy-clean 配对训练
+#   separate_lists : clean + noise 在线随机混噪
+DATA_MODE="paired"
+
+if [[ "${DATA_MODE}" == "paired" ]]; then
+    BASE_CONFIG="configs/dccrn_base_fixed_pair.yaml"
+
+elif [[ "${DATA_MODE}" == "separate_lists" ]]; then
+    BASE_CONFIG="configs/dccrn_base.yaml"
+
+else
+    echo "错误：DATA_MODE必须为 paired 或 separate_lists" >&2
+    exit 1
+fi
+
+# ==================================================
 # 数据列表
+# ==================================================
+
+# ---------- paired 模式 ----------
+TRAIN_PAIR_LIST="/data/huayifan/water_denoise/data/Zhaoyu/snr_-10_-5_class_all/train/list/train_all_snr.list"
+
+# ---------- separate_lists 模式 ----------
 TRAIN_CLEAN_LIST="data/ShipsEar-12class_W5H1/train_16k_signal.list"
 TRAIN_NOISE_LIST="data/ShipsEar-12class_W5H1/train_16k_noise.list"
-VALID_PAIR_LIST="data/ShipsEar-12class_W5H1/valid/list/valid_snr_-5dB.list"
-TEST_PAIR_LIST="data/ShipsEar-12class_W5H1/test/list/valid_snr_-5dB.list"
+
+# ---------- 两种模式共用 ----------
+# VALID_PAIR_LIST="data/ShipsEar-12class_W5H1/valid/list/valid_snr_-5dB.list"
+# TEST_PAIR_LIST="data/ShipsEar-12class_W5H1/test/list/valid_snr_-5dB.list"
+VALID_PAIR_LIST="/data/huayifan/water_denoise/data/Zhaoyu/snr_-10_-5_class_all/test/list/test_all_snr.list"
+TEST_PAIR_LIST="/data/huayifan/water_denoise/data/Zhaoyu/snr_-10_-5_class_all/test/list/test_all_snr.list"
 
 # 数据参数
 SAMPLE_RATE=16000
@@ -31,7 +62,7 @@ NUM_WORKERS=2
 # 训练参数
 SEED=42
 BATCH_SIZE=32
-EPOCHS=50
+EPOCHS=100
 LEARNING_RATE=1e-4
 
 # ==================================================
@@ -145,6 +176,43 @@ fi
 
 
 # ==================================================
+# 数据模式 / 路径检查
+# ==================================================
+
+if [[ "${DATA_MODE}" == "paired" ]]; then
+    [[ -f "${TRAIN_PAIR_LIST}" ]] || {
+        echo "错误：TRAIN_PAIR_LIST不存在：${TRAIN_PAIR_LIST}" >&2
+        exit 1
+    }
+
+elif [[ "${DATA_MODE}" == "separate_lists" ]]; then
+    [[ -f "${TRAIN_CLEAN_LIST}" ]] || {
+        echo "错误：TRAIN_CLEAN_LIST不存在：${TRAIN_CLEAN_LIST}" >&2
+        exit 1
+    }
+
+    [[ -f "${TRAIN_NOISE_LIST}" ]] || {
+        echo "错误：TRAIN_NOISE_LIST不存在：${TRAIN_NOISE_LIST}" >&2
+        exit 1
+    }
+
+else
+    echo "错误：DATA_MODE必须为 paired 或 separate_lists" >&2
+    exit 1
+fi
+
+[[ -f "${VALID_PAIR_LIST}" ]] || {
+    echo "错误：VALID_PAIR_LIST不存在：${VALID_PAIR_LIST}" >&2
+    exit 1
+}
+
+[[ -f "${TEST_PAIR_LIST}" ]] || {
+    echo "错误：TEST_PAIR_LIST不存在：${TEST_PAIR_LIST}" >&2
+    exit 1
+}
+
+
+# ==================================================
 # 一般不需要修改下面内容
 # ==================================================
 
@@ -160,6 +228,8 @@ export BASE_CONFIG
 export GENERATED_CONFIG
 export EXP_NAME
 export OUTPUT_DIR
+export DATA_MODE
+export TRAIN_PAIR_LIST
 export TRAIN_CLEAN_LIST
 export TRAIN_NOISE_LIST
 export VALID_PAIR_LIST
@@ -228,14 +298,28 @@ data = get_required_mapping(
     "data",
 )
 
-data["train_clean_list"] = os.environ["TRAIN_CLEAN_LIST"]
-data["train_noise_list"] = os.environ["TRAIN_NOISE_LIST"]
+data_mode = os.environ["DATA_MODE"]
+
+if data_mode == "paired":
+    data["mode"] = "paired"
+    data["train_pair_list"] = os.environ["TRAIN_PAIR_LIST"]
+
+elif data_mode == "separate_lists":
+    data["mode"] = "separate_lists"
+    data["train_clean_list"] = os.environ["TRAIN_CLEAN_LIST"]
+    data["train_noise_list"] = os.environ["TRAIN_NOISE_LIST"]
+    data["train_snr_min"] = float(os.environ["SNR_MIN"])
+    data["train_snr_max"] = float(os.environ["SNR_MAX"])
+
+else:
+    raise ValueError(
+        "DATA_MODE must be 'paired' or 'separate_lists', got {!r}".format(data_mode)
+    )
+
 data["valid_pair_list"] = os.environ["VALID_PAIR_LIST"]
 data["test_pair_list"] = os.environ["TEST_PAIR_LIST"]
 data["sample_rate"] = int(os.environ["SAMPLE_RATE"])
 data["segment_seconds"] = float(os.environ["SEGMENT_SECONDS"])
-data["train_snr_min"] = float(os.environ["SNR_MIN"])
-data["train_snr_max"] = float(os.environ["SNR_MAX"])
 data["num_workers"] = int(os.environ["NUM_WORKERS"])
 
 # --------------------------------------------------
@@ -406,7 +490,14 @@ PY
 echo "=========================================="
 echo "实验名称：${EXP_NAME}"
 echo "GPU：${GPU_ID}"
-echo "训练SNR：${SNR_MIN}～${SNR_MAX} dB"
+echo "数据模式：${DATA_MODE}"
+if [[ "${DATA_MODE}" == "paired" ]]; then
+    echo "训练Pair List：${TRAIN_PAIR_LIST}"
+else
+    echo "Clean List：${TRAIN_CLEAN_LIST}"
+    echo "Noise List：${TRAIN_NOISE_LIST}"
+    echo "训练SNR：${SNR_MIN}～${SNR_MAX} dB"
+fi
 echo "Batch size：${BATCH_SIZE}"
 echo "Epochs：${EPOCHS}"
 echo "学习率：${LEARNING_RATE}"

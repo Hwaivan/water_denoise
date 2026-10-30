@@ -16,6 +16,21 @@ def validate_checkpoint_config(saved, expected):
     for key in ("model", "representation", "stft", "compression", "process"):
         if saved.get(key) != expected.get(key):
             raise ValueError("Checkpoint/config mismatch in " + key)
+        saved_weighting = (
+            saved.get("training", {})
+            .get("score_loss_weighting", "none")
+        )
+
+        expected_weighting = (
+            expected.get("training", {})
+            .get("score_loss_weighting", "none")
+        )
+
+        if saved_weighting != expected_weighting:
+            raise ValueError(
+                "Checkpoint/config mismatch in "
+                "training.score_loss_weighting"
+            )
 
 
 def save_checkpoint(state: Dict[str, Any], path: str) -> None:

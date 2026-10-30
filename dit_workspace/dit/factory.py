@@ -48,9 +48,19 @@ def build_process(config, representation):
     raise ValueError(values["type"])
 
 
-def build_objective(config, process, representation):
-    return RegressionObjective(representation, process, config["compression"].get("crop_frames"))
+# def build_objective(config, process, representation):
+#     return RegressionObjective(representation, process, config["compression"].get("crop_frames"))
 
+def build_objective(config, process, representation):
+    return RegressionObjective(
+        representation,
+        process,
+        config["compression"].get("crop_frames"),
+        score_loss_weighting=config["training"].get(
+            "score_loss_weighting",
+            "none",
+        ),
+    )
 
 def build_sampler(config, process, representation):
     values = dict(config["sampler"])

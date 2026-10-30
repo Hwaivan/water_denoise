@@ -80,17 +80,38 @@ class OUVESDE:
         interpolation = _batch_broadcast(torch.exp(-self.gamma * t), x0)
         return interpolation * x0 + (1.0 - interpolation) * y
 
-    def variance(self, t: torch.Tensor) -> torch.Tensor:
-        """Closed marginal variance requested by the integration specification.
+    # def variance(self, t: torch.Tensor) -> torch.Tensor:
+    #     """Closed marginal variance requested by the integration specification.
 
-        ``sigma_min^2 * (r^(2t)-exp(-2 gamma t))/(gamma+log(r))``.
-        Negative round-off is clamped to ``variance_floor``.
-        """
+    #     ``sigma_min^2 * (r^(2t)-exp(-2 gamma t))/(gamma+log(r))``.
+    #     Negative round-off is clamped to ``variance_floor``.
+    #     """
+    #     if t.ndim != 1:
+    #         raise ValueError("t must have shape [B]")
+    #     ratio = self.sigma_max / self.sigma_min
+    #     numerator = ratio ** (2.0 * t) - torch.exp(-2.0 * self.gamma * t)
+    #     variance = self.sigma_min ** 2 * numerator / (self.gamma + self.log_ratio)
+    #     return variance.clamp_min(self.variance_floor)
+
+    def variance(self, t):
+        """Closed-form marginal variance of the OUVE SDE."""
         if t.ndim != 1:
             raise ValueError("t must have shape [B]")
+
         ratio = self.sigma_max / self.sigma_min
-        numerator = ratio ** (2.0 * t) - torch.exp(-2.0 * self.gamma * t)
-        variance = self.sigma_min ** 2 * numerator / (self.gamma + self.log_ratio)
+
+        numerator = (
+            ratio ** (2.0 * t)
+            - torch.exp(-2.0 * self.gamma * t)
+        )
+
+        variance = (
+            self.sigma_min ** 2
+            * self.log_ratio
+            * numerator
+            / (self.gamma + self.log_ratio)
+        )
+
         return variance.clamp_min(self.variance_floor)
 
     def std(self, t: torch.Tensor) -> torch.Tensor:

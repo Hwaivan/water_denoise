@@ -9,15 +9,20 @@ set -euo pipefail
 PROJECT_DIR="/data/huayifan/water_denoise"
 GPU_ID="1"
 
-CONFIG_FILE="${PROJECT_DIR}/configs/dccrn_base.yaml"
+# CONFIG_FILE="${PROJECT_DIR}/configs/dccrn_base.yaml"
+CONFIG_FILE="${PROJECT_DIR}/configs/dccrn_base_fixed_pair.yaml"
 
-CHECKPOINT_FILE="${PROJECT_DIR}/logs/dccrn_snr_m10_10/checkpoints/best.pt"
+# CHECKPOINT_FILE="${PROJECT_DIR}/logs/dccrn_snr_m10_10/checkpoints/best.pt"
+CHECKPOINT_FILE="${PROJECT_DIR}/logs/dccrn_zys_fixed/checkpoints/best.pt"
 
-OUTPUT_DIR="${PROJECT_DIR}/logs/dccrn_snr_m10_10/evaluation_best_true/snr_0dB"
+
+# OUTPUT_DIR="${PROJECT_DIR}/logs/dccrn_snr_m10_10/evaluation_best_true/snr_0dB"
+OUTPUT_DIR="${PROJECT_DIR}/logs/dccrn_zys_fixed/evaluation_best_true/snr_-5dB"
 
 # TEST_PAIR_LIST="${PROJECT_DIR}/data/ShipsEar-12class_W5H1/test/list/valid_snr_-5dB.list"
 # TEST_PAIR_LIST="${PROJECT_DIR}/data/ShipsEar-12class_W5H1/test/list/valid_snr_-5dB.list"
-TEST_PAIR_LIST="${PROJECT_DIR}/data/ShipsEar-12class_W5H1/test/list/snr_0dB.list"
+# TEST_PAIR_LIST="${PROJECT_DIR}/data/ShipsEar-12class_W5H1/test/list/snr_0dB.list"
+TEST_PAIR_LIST="${PROJECT_DIR}/data/Zhaoyu/snr_-10_-5_class_all/test/list/snr_-5dB.list"
 
 RUNTIME_CONFIG="${OUTPUT_DIR}/test_runtime.yaml"
 
@@ -169,6 +174,11 @@ config["data"]["test_pair_list"] = "${TEST_PAIR_LIST}"
 
 # 长音频测试建议batch size为1
 config["training"]["batch_size"] = 1
+
+# 保存测试集中全部音频
+config.setdefault("evaluation", {})
+config["evaluation"]["save_audio_examples"] = True
+config["evaluation"]["max_audio_examples"] = int("${TEST_COUNT}")
 
 # 测试不需要AMP配置，但保留原配置不会影响evaluate.py
 with runtime_path.open("w", encoding="utf-8") as f:
