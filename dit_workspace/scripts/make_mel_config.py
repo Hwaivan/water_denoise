@@ -21,6 +21,7 @@ def main():
     p.add_argument("--win-length", type=int, default=400)
     p.add_argument("--hop-length", type=int, default=100)
     p.add_argument("--mel-bands", type=int, default=128)
+    p.add_argument("--mel-normalization", choices=("dataset", "utterance"), default="dataset")
     p.add_argument("--hidden", type=int, default=768)
     p.add_argument("--depth", type=int, default=10)
     p.add_argument("--heads", type=int, default=12)
@@ -69,8 +70,8 @@ def main():
     cfg["validation"].update(eval_interval=a.eval_interval, max_sampling_batches=a.sampling_valid_batches)
     cfg["inference"].update(chunk_seconds=a.segment_seconds, overlap_seconds=0.)
     mel = dict(n_mels=a.mel_bands, f_min=0., f_max=a.sample_rate / 2,
-               norm="slaney", power=2., log_eps=1e-6, normalization="dataset",
-               stats_path=str(run_dir / "mel_stats.pt"))
+               norm="slaney", power=2., log_eps=1e-6, normalization=a.mel_normalization,
+               stats_path=(str(run_dir / "mel_stats.pt") if a.mel_normalization == "dataset" else None))
     if a.mode == "log_mel":
         cfg["representation"] = {"type": "log_mel", "mel": mel}
         cfg["conditioning"] = {"type": "none"}
@@ -92,7 +93,10 @@ def main():
     run_dir.mkdir(parents=True, exist_ok=True)
     output.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
     print(f"Created {output} ({a.mode}, {a.process}, {a.data_mode})")
-    print("Mel stats to prepare:", mel["stats_path"])
+    if a.mel_normalization == "dataset":
+        print("Mel stats to prepare:", mel["stats_path"])
+    else:
+        print("Utterance normalization: no dataset stats file required")
 
 
 if __name__ == "__main__":

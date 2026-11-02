@@ -19,40 +19,139 @@ class SampleResult:
         return self.representation
 
 
-class WaveformSampler:
-    def __init__(self, representation, solver):
-        self.representation, self.solver = representation, solver
+# class WaveformSampler:
+#     def __init__(self, representation, solver):
+#         self.representation, self.solver = representation, solver
 
-    def sample_spectrum(self, model, condition, generator=None):
-        return self.solver.sample(model, condition, generator)
+#     def sample_spectrum(self, model, condition, generator=None):
+#         return self.solver.sample(model, condition, generator)
+
+#     @torch.inference_mode()
+#     def sample_waveform(self, model, noisy, lengths=None, sample_rate=16000, generator=None):
+#         if noisy.ndim != 2 or noisy.shape[-1] == 0:
+#             raise ValueError("Expected nonempty [B,L] audio")
+#         if noisy.device.type == "cuda":
+#             torch.cuda.synchronize(noisy.device)
+#         started = time.perf_counter()
+#         self.representation.to(noisy.device)
+#         self.solver.process.to(noisy.device)
+#         # Reflect STFT cannot pad an input shorter than n_fft/2.
+#         original_length = noisy.shape[-1]
+#         noisy = F.pad(noisy, (0, max(0, self.representation.n_fft // 2 + 1-original_length)))
+#         with torch.autocast(device_type=noisy.device.type, enabled=False):
+#             condition = self.representation.encode(noisy.float())
+#             phase = self.representation.stft(noisy.float()).angle() if self.representation.channels == 1 else None
+#             estimate, nfe = self.sample_spectrum(model, condition, generator)
+#             waveform = self.representation.decode(estimate, noisy.shape[-1], phase)[..., :original_length]
+#         if lengths is not None:
+#             waveform *= (torch.arange(original_length, device=noisy.device)[None] < lengths[:, None])
+#         if not torch.isfinite(waveform).all():
+#             raise FloatingPointError("Non-finite decoded waveform")
+#         if noisy.device.type == "cuda":
+#             torch.cuda.synchronize(noisy.device)
+#         elapsed = time.perf_counter()-started
+#         duration = (lengths.sum().item() if lengths is not None else waveform.numel()) / sample_rate
+#         return SampleResult(estimate, waveform, nfe, elapsed, elapsed/max(duration, 1e-12))
+
+class WaveformSampler:
+    def __init__(self, representation, solver, auxiliary_encoder=None):
+        self.representation = representation
+        self.solver = solver
+        self.auxiliary_encoder = auxiliary_encoder
+
+    def sample_spectrum(self, model, condition, generator=None,
+                        aux_condition=None):
+        if aux_condition is None:
+            return self.solver.sample(model, condition, generator)
+
+        return self.solver.sample(
+            model, condition, generator,
+            aux_condition=aux_condition,
+        )
 
     @torch.inference_mode()
-    def sample_waveform(self, model, noisy, lengths=None, sample_rate=16000, generator=None):
+    def sample_waveform(self, model, noisy, lengths=None,
+                        sample_rate=16000, generator=None):
         if noisy.ndim != 2 or noisy.shape[-1] == 0:
             raise ValueError("Expected nonempty [B,L] audio")
+
         if noisy.device.type == "cuda":
             torch.cuda.synchronize(noisy.device)
+
         started = time.perf_counter()
+
         self.representation.to(noisy.device)
         self.solver.process.to(noisy.device)
-        # Reflect STFT cannot pad an input shorter than n_fft/2.
+
+        if self.auxiliary_encoder is not None:
+            self.auxiliary_encoder.to(noisy.device)
+
         original_length = noisy.shape[-1]
-        noisy = F.pad(noisy, (0, max(0, self.representation.n_fft // 2 + 1-original_length)))
+        noisy = F.pad(
+            noisy,
+            (0, max(
+                0,
+                self.representation.n_fft // 2 + 1 - original_length
+            )),
+        )
+
         with torch.autocast(device_type=noisy.device.type, enabled=False):
             condition = self.representation.encode(noisy.float())
-            phase = self.representation.stft(noisy.float()).angle() if self.representation.channels == 1 else None
-            estimate, nfe = self.sample_spectrum(model, condition, generator)
-            waveform = self.representation.decode(estimate, noisy.shape[-1], phase)[..., :original_length]
+
+            rep_type = getattr(self.representation, "type", None)
+            need_phase = (
+                self.representation.channels == 1
+                and rep_type != "log_mel"
+            )
+
+            phase = (
+                self.representation.stft(noisy.float()).angle()
+                if need_phase else None
+            )
+
+            aux = (
+                self.auxiliary_encoder.encode(noisy.float())
+                if self.auxiliary_encoder is not None else None
+            )
+
+            if aux is not None and aux.shape[-1] != condition.shape[-1]:
+                raise ValueError("Mel and state frame count mismatch")
+
+            estimate, nfe = self.sample_spectrum(
+                model, condition, generator,
+                aux_condition=aux,
+            )
+
+            waveform = self.representation.decode(
+                estimate,
+                noisy.shape[-1],
+                phase,
+                noisy_waveform=noisy,
+            )[..., :original_length]
+
         if lengths is not None:
-            waveform *= (torch.arange(original_length, device=noisy.device)[None] < lengths[:, None])
+            waveform *= (
+                torch.arange(original_length, device=noisy.device)[None]
+                < lengths[:, None]
+            )
+
         if not torch.isfinite(waveform).all():
             raise FloatingPointError("Non-finite decoded waveform")
+
         if noisy.device.type == "cuda":
             torch.cuda.synchronize(noisy.device)
-        elapsed = time.perf_counter()-started
-        duration = (lengths.sum().item() if lengths is not None else waveform.numel()) / sample_rate
-        return SampleResult(estimate, waveform, nfe, elapsed, elapsed/max(duration, 1e-12))
 
+        elapsed = time.perf_counter() - started
+        duration = (
+            lengths.sum().item()
+            if lengths is not None else waveform.numel()
+        ) / sample_rate
+
+        return SampleResult(
+            estimate, waveform, nfe,
+            elapsed, elapsed / max(duration, 1e-12),
+        )
+    
 
 @torch.inference_mode()
 def enhance_long_waveform(sampler, model, waveform, sample_rate, generator=None,

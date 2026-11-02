@@ -35,9 +35,18 @@ NUM_GPUS="1"
 # BASE_CONFIG="configs/dit_score_magnitude_frame_token_5s_hidSz=512.yaml"
 # BASE_CONFIG="configs/dit_score_magnitude_frame_token_5s_hidSz=768.yaml"
 # BASE_CONFIG="configs/dit_score_log_magnitude_frame_token_5s_hidSz=768.yaml"
+# BASE_CONFIG="configs/dit_score_logmel_frame_5s.yaml"
 
 # Flow Matching
-BASE_CONFIG="configs/dit_flow_complex_frame_token_5s_hidSz=1024.yaml"
+# BASE_CONFIG="configs/dit_flow_complex_frame_token_5s_hidSz=1024.yaml"
+# BASE_CONFIG="configs/dit_flow_logmel_frame_5s.yaml"
+# BASE_CONFIG="configs/dit_flow_magnitude_frame_5s.yaml"
+# BASE_CONFIG="configs/dit_flow_logmel_frame_5s_utterance.yaml"
+# BASE_CONFIG="configs/dit_flow_logmel_frame_5s_hidSz=512.yaml"
+# BASE_CONFIG="configs/dit_flow_logmel_frame_5s_hidSz=512_numhead=8.yaml"
+# BASE_CONFIG="configs/dit_flow_logmel_frame_5s_hidSz=512_numhead=8_wo_norm.yaml"
+
+BASE_CONFIG="configs/dit_flow_log_magnitude_utterance_frame_5s.yaml"
 
 # ---------------- Score Loss ----------------
 # none   : 原始 score MSE
@@ -58,7 +67,13 @@ SCORE_LOSS_WEIGHTING="sigma2"
 # EXP_NAME="dit_score_log_magnitude_frame_token_5s_hidSz=768_hop=100_real_loss=${SCORE_LOSS_WEIGHTING}_onthefly_withAMP"
 
 # EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
-EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_numhead=8_smallMLP_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
+# EXP_NAME="smoke_dit_flow_complex_frame_token_5s_hidSz=1024_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
+# EXP_NAME="dit_flow_logmel_frame_token_5s_hidSz=512_numhead=8_smallMLP_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
+
+# EXP_NAME="dit_score_logmel_frame_token_5s_hidSz=768_numhead=12_smallMLP_loss=${SCORE_LOSS_WEIGHTING}_zys_paired"
+# EXP_NAME="dit_flow_magnitude_frame_token_5s_hidSz=512_numhead=8_smallMLP_zys_paired"
+# EXP_NAME="dit_flow_magnitude_utterance_frame_token_5s_hidSz=768_numhead=8_smallMLP_onthefly_-10~0dB"
+EXP_NAME="dit_flow_log_magnitude_utterance_frame_token_5s_hidSz=768_numhead=12_smallMLP_onthefly_-10~0dB"
 
 # 可以随时修改整个实验保存根目录
 RUN_ROOT="${PROJECT_DIR}/runs"
@@ -76,8 +91,8 @@ RUN_DIR="${RUN_ROOT}/${EXP_NAME}"
 #   TRAIN_MANIFEST 为 clean 单列 list
 #   NOISE_MANIFEST 为 noise 单列 list
 #
-# DATA_MODE="on_the_fly"
-DATA_MODE="paired"
+DATA_MODE="on_the_fly"
+# DATA_MODE="paired"
 
 # ---------------- 训练 / 验证 / 默认测试 list ----------------
 
@@ -109,7 +124,7 @@ SNR_MAX="0"
 
 # ---------------- 训练参数 ----------------
 SEED="42"
-EPOCHS="100"
+EPOCHS="300"
 BATCH_SIZE="64"
 LEARNING_RATE="0.0001"
 NUM_WORKERS="4"
@@ -125,7 +140,7 @@ SAVE_EVERY="5"
 # ---------------- 断点续训 ----------------
 # 留空表示从头训练
 RESUME_CHECKPOINT=""
-
+# RESUME_CHECKPOINT="${RUN_DIR}/checkpoints/last.pt"
 # 例如：
 # RESUME_CHECKPOINT="${RUN_DIR}/checkpoints/last.pt"
 

@@ -68,14 +68,17 @@ class LogMelRepresentation(ComplexSTFTTransform):
         self.power = float(cfg.get("power", 2.0))
         self.log_eps = float(cfg.get("log_eps", 1e-6))
         self.normalization = str(cfg.get("normalization", "dataset"))
+        self.utterance_std_floor = float(cfg.get("utterance_std_floor", 1e-3))
+        if self.utterance_std_floor <= 0:
+            raise ValueError("utterance_std_floor must be positive")
         self.stats_path = cfg.get("stats_path")
         self.reconstruction = dict(reconstruction or {"type": "mel_gain_noisy_phase"})
         if not self.onesided:
             raise ValueError("Mel representation requires onesided=True")
         if self.power <= 0 or self.log_eps <= 0:
             raise ValueError("Mel power and epsilon must be positive")
-        if self.normalization not in ("dataset", "none"):
-            raise ValueError("Mel normalization must be dataset or none")
+        if self.normalization not in ("dataset", "none", "utterance"):
+            raise ValueError("Mel normalization must be dataset, none or utterance")
         if self.reconstruction.get("type", "mel_gain_noisy_phase") != "mel_gain_noisy_phase":
             raise NotImplementedError("Only mel_gain_noisy_phase reconstruction implemented")
         self.gain_min = float(self.reconstruction.get("gain_min", 0.05))
@@ -117,10 +120,28 @@ class LogMelRepresentation(ComplexSTFTTransform):
         mel = torch.einsum("mf,bft->bmt", self.mel_weights.to(powers), powers)
         return torch.log(mel.clamp_min(self.log_eps))
 
+    def _stats_for_noisy_log(self, noisy_log: torch.Tensor):
+        """Return [B,1,1] noisy-only utterance stats or fixed [1,M,1] stats."""
+        if self.normalization == "utterance":
+            mean = noisy_log.mean(dim=(-2, -1), keepdim=True)
+            std = noisy_log.std(dim=(-2, -1), unbiased=False, keepdim=True)
+            return mean, std.clamp_min(self.utterance_std_floor)
+        return self.mean[None, :, None], self.std[None, :, None]
+
     def encode(self, waveform: torch.Tensor) -> torch.Tensor:
+        """Encode a noisy waveform (or fixed-normalization waveform)."""
         value = self.log_mel(waveform)
-        value = (value - self.mean[None, :, None]) / self.std[None, :, None]
-        return value[:, None]
+        mean, std = self._stats_for_noisy_log(value)
+        return ((value - mean) / std)[:, None]
+
+    def encode_pair(self, clean_waveform: torch.Tensor, noisy_waveform: torch.Tensor):
+        """Encode aligned pair using stats computed from noisy waveform ONLY."""
+        if clean_waveform.shape != noisy_waveform.shape:
+            raise ValueError("Clean/noisy waveform shape mismatch")
+        clean_log = self.log_mel(clean_waveform)
+        noisy_log = self.log_mel(noisy_waveform)
+        mean, std = self._stats_for_noisy_log(noisy_log)
+        return ((clean_log - mean) / std)[:, None], ((noisy_log - mean) / std)[:, None]
 
     def decode(self, representation: torch.Tensor, length: int,
                noisy_phase=None, noisy_waveform: torch.Tensor | None = None) -> torch.Tensor:
@@ -132,7 +153,8 @@ class LogMelRepresentation(ComplexSTFTTransform):
         if noisy_spectrum.shape[-1] != representation.shape[-1]:
             raise ValueError("noisy/estimated Mel frame counts differ")
         noisy_log = self.log_mel(noisy_waveform.float())
-        target_log = representation[:, 0].float() * self.std[None, :, None] + self.mean[None, :, None]
+        mean, std = self._stats_for_noisy_log(noisy_log)
+        target_log = representation[:, 0].float() * std + mean
         # A Mel power ratio, converted to a magnitude gain; no inverse Mel claim.
         log_gain = ((target_log - noisy_log) / self.power).clamp(
             min=math.log(self.gain_min), max=math.log(self.gain_max))

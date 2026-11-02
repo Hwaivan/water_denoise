@@ -23,7 +23,7 @@ PROJECT_DIR="/data/huayifan/water_denoise/dit_workspace"
 # GPU
 # ------------------------------------------------------------
 
-GPU_ID="0"
+GPU_ID="1"
 DEVICE="cuda"
 
 # CPU:
@@ -51,7 +51,17 @@ DEVICE="cuda"
 # EXP_NAME="dit_score_complex_frame_token_5s_hidSz=1024_smallMLP_real_LogSigma_loss=sigma2_zys_paired"
 
 # EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_onthefly_-10~0dB"
-EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_numhead=8_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_flow_complex_frame_token_5s_hidSz=1024_numhead=8_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_score_logmel_frame_token_5s_hidSz=768_numhead=12_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_flow_logmel_frame_token_5s_hidSz=768_numhead=12_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_flow_logmel_frame_token_5s_hidSz=512_numhead=16_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_flow_logmel_frame_token_5s_hidSz=512_numhead=8_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_flow_logmel_frame_token_5s_hidSz=512_numhead=8_smallMLP_loss=sigma2_zys_paired"
+# EXP_NAME="dit_flow_logmel_frame_token_5s_hidSz=768_numhead=12_smallMLP_onethefly_-10~0dB"
+EXP_NAME="dit_flow_logmel_wo_norm_frame_token_5s_hidSz=512_numhead=8_smallMLP_zys_paired"
+
+# EXP_NAME="dit_score_complex_frame_token_5s_hidSz=1024_real_loss=sigma2_onthefly_-10~0dB"
+
 
 RUN_ROOT="${PROJECT_DIR}/runs"
 RUN_DIR="${RUN_ROOT}/${EXP_NAME}"

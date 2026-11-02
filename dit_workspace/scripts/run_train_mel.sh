@@ -22,6 +22,7 @@ DEPTH="10"
 HEADS="12"
 MLP_RATIO="2"
 MEL_BANDS="128"
+MEL_NORMALIZATION="dataset"   # dataset | utterance
 EPOCHS="100"
 BATCH_SIZE="8"
 LEARNING_RATE="0.0001"
@@ -63,6 +64,7 @@ python mel_scripts/make_mel_config.py \
   --test-manifest "${TEST_MANIFEST}" --noise-manifest "${NOISE_MANIFEST}" \
   --hidden "${HIDDEN}" --depth "${DEPTH}" --heads "${HEADS}" \
   --mlp-ratio "${MLP_RATIO}" --mel-bands "${MEL_BANDS}" \
+  --mel-normalization "${MEL_NORMALIZATION}" \
   --batch "${BATCH_SIZE}" --epochs "${EPOCHS}" --lr "${LEARNING_RATE}" \
   --num-workers "${NUM_WORKERS}" --amp "${AMP}" --steps "${SAMPLING_STEPS}" \
   --sampling-valid-batches "${MAX_SAMPLING_BATCHES}" --eval-interval "${EVAL_INTERVAL}" \
@@ -71,8 +73,12 @@ python mel_scripts/make_mel_config.py \
 # Mel normalization is computed exclusively on train waveforms and saved with SHA.
 # When resuming, do not silently overwrite train stats or config metadata.
 if [[ -z "${RESUME_CHECKPOINT}" ]]; then
-  python mel_scripts/prepare_mel_stats.py --config "${CONFIG_FILE}" \
-    --max-items "${STATS_MAX_ITEMS}" --seed "${SEED}"
+  if [[ "${MEL_NORMALIZATION}" == "dataset" ]]; then
+    python -m mel_scripts.prepare_mel_stats --config "${CONFIG_FILE}" \
+      --max-items "${STATS_MAX_ITEMS}" --seed "${SEED}"
+  else
+    echo "Utterance normalization: skip dataset Mel stats"
+  fi
 else
   echo "Resume: reuse your previous runtime config and stats; this wrapper regenerates config!" >&2
   echo "Resume via: python train.py --config OLD_RUNTIME_CONFIG --resume CHECKPOINT" >&2

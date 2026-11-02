@@ -1,4 +1,4 @@
-"""Euler-Maruyama/annealed Langevin, matching the local SGMSE equations."""
+"""Euler-Maruyama/annealed Langevin, optional extra network-only Mel condition."""
 import torch
 from dit.processes.base import broadcast
 
@@ -15,7 +15,7 @@ class ScorePC:
         self.corrector_step_size = corrector_step_size
 
     @torch.inference_mode()
-    def sample(self, model, condition, generator=None):
+    def sample(self, model, condition, generator=None, aux_condition=None):
         p, sde = self.process, self.process.sde
         time = condition.new_full((condition.shape[0],), sde.T)
         state = condition + broadcast(sde.std(time), condition) * p.noise(condition, generator)
@@ -24,13 +24,19 @@ class ScorePC:
         for index in range(self.num_steps):
             time = grid[index].expand(condition.shape[0])
             for _ in range(self.corrector_steps):
-                score = model(state=state, condition=condition, time=time).float()
+                kwargs = {"state": state, "condition": condition, "time": time}
+                if aux_condition is not None:
+                    kwargs["aux_condition"] = aux_condition
+                score = model(**kwargs).float()
                 nfe += 1
                 step = self.corrector_step_size * broadcast(sde.std(time).square(), state)
                 state = state + step * score + (2 * step).sqrt() * p.noise(state, generator)
-            score = model(state=state, condition=condition, time=time).float()
+            kwargs = {"state": state, "condition": condition, "time": time}
+            if aux_condition is not None:
+                kwargs["aux_condition"] = aux_condition
+            score = model(**kwargs).float()
             nfe += 1
-            delta = grid[index+1] - grid[index]
+            delta = grid[index + 1] - grid[index]
             state = state + sde.reverse_drift(state, condition, time, score) * delta
             if index < self.num_steps - 1:
                 state = state + broadcast(sde.diffusion(time), state) * (-delta).sqrt() * p.noise(state, generator)

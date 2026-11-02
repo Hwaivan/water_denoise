@@ -77,8 +77,26 @@ def _run_training(
         frames = config["compression"].get("crop_frames") or (round(
             config["data"]["segment_seconds"] * config["data"]["sample_rate"])
             // config["stft"]["hop_length"] + 1)
-        bins = config["stft"]["n_fft"] // 2 + 1 if config["stft"]["onesided"] else config["stft"]["n_fft"]
-        config["runtime"] = {**model.geometry(bins, frames), "noise_convention": process.noise_convention}
+        # bins = config["stft"]["n_fft"] // 2 + 1 if config["stft"]["onesided"] else config["stft"]["n_fft"]
+        # config["runtime"] = {**model.geometry(bins, frames), "noise_convention": process.noise_convention}
+
+        # 使用模型实际配置的频率维度
+        # Log-Mel: 128
+        # Complex STFT: 257
+        if hasattr(model, "frequency_bins"):
+            bins = model.frequency_bins
+        else:
+            bins = (
+                config["stft"]["n_fft"] // 2 + 1
+                if config["stft"]["onesided"]
+                else config["stft"]["n_fft"]
+            )
+
+        config["runtime"] = {
+            **model.geometry(bins, frames),
+            "noise_convention": process.noise_convention
+        }
+
         logger.info("representation=%s process=%s runtime=%s", representation.type, process.kind, config["runtime"])
         if context.is_main:
             save_config(config, str(Path(output_dir) / "runtime_config.yaml"))

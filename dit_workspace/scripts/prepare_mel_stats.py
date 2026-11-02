@@ -26,6 +26,8 @@ def main():
         mel = cfg["representation"]["mel"]
     else:
         mel = cfg["conditioning"]["mel"]
+    if mel.get("normalization", "dataset") != "dataset":
+        raise ValueError("Only dataset normalization needs offline Mel stats")
     stats = Path(mel["stats_path"]).resolve()
     mel_temp = dict(mel)
     mel_temp["normalization"] = "none"
